@@ -1,0 +1,22 @@
+{
+  "name": "pmf",
+  "description": "Twelve product-market fit skills that take a business from idea to launch in Claude Code, Codex and OpenCode: an adversarial pressure test, real market research, a simulated buyer panel, the offer and its price, unit economics, the smallest MVP with agentic coding discipline, marketing, brand, operations, the launch and the compiled plan.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Rishit Sharma",
+    "url": "https://github.com/Rish-it"
+  },
+  "homepage": "https://github.com/Rish-it/pmf",
+  "repository": "https://github.com/Rish-it/pmf",
+  "license": "MIT",
+  "keywords": [
+    "claude-code",
+    "codex",
+    "opencode",
+    "agent-skills",
+    "product-market fit",
+    "startup",
+    "validation",
+    "unit-economics"
+  ]
+}

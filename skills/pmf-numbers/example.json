@@ -1,0 +1,10 @@
+{
+  "unit": "drink",
+  "price": 4.50,
+  "variable": 1.60,
+  "fixed_monthly": 3800,
+  "startup": 18500,
+  "plan_per_day": 140,
+  "ramp_per_day": [45, 70, 95, 110, 120, 130, 140, 140, 135, 130, 120, 115],
+  "capacity_per_day": 180
+}

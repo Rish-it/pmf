@@ -1,0 +1,9 @@
+# Local reference material (not part of the repo)
+.reference/
+
+# Python
+__pycache__/
+*.pyc
+
+# OS
+.DS_Store

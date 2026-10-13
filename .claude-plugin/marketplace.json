@@ -1,0 +1,18 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "pmf",
+  "description": "The pmf skill pack for Claude Code, Codex and OpenCode",
+  "owner": {
+    "name": "Rishit Sharma",
+    "url": "https://github.com/Rish-it"
+  },
+  "plugins": [
+    {
+      "name": "pmf",
+      "description": "Twelve product-market fit skills that take a business from idea to launch: pressure test, research, a simulated buyer panel, offer and price, unit economics, the smallest MVP, marketing, brand, operations, launch and the compiled plan.",
+      "source": "./",
+      "category": "productivity",
+      "homepage": "https://github.com/Rish-it/pmf"
+    }
+  ]
+}

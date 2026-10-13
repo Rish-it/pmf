@@ -1,0 +1,57 @@
+{
+  "business": "Cart & Grounds, a mobile specialty coffee cart for office parks",
+  "target": "Office workers at business parks who buy coffee two or more times on a work day",
+  "segments": [
+    {
+      "name": "daily regulars",
+      "share": 45,
+      "income": [55000, 130000]
+    },
+    {
+      "name": "meeting buyers",
+      "share": 30,
+      "income": [70000, 160000]
+    },
+    {
+      "name": "deal hunters",
+      "share": 25,
+      "income": [35000, 90000]
+    }
+  ],
+  "behaviours": [
+    {
+      "name": "daily regular",
+      "share": 35,
+      "how": "buys coffee most mornings, has a usual order, notices when the line is long"
+    },
+    {
+      "name": "deal hunter",
+      "share": 20,
+      "how": "compares prices, screenshots loyalty offers, will walk two blocks to save a dollar"
+    },
+    {
+      "name": "quality first",
+      "share": 25,
+      "how": "reads about beans and gear, will pay more for a better cup, sceptical of carts"
+    },
+    {
+      "name": "meeting runner",
+      "share": 20,
+      "how": "buys 3 to 6 drinks at once for the team, cares about speed and carrying trays"
+    }
+  ],
+  "objections": [
+    "A cart feels less hygienic than a shop",
+    "The line will be long when I have ten minutes",
+    "It might not be there tomorrow, so I should not depend on it",
+    "It is probably cheaper to make it in the office kitchen",
+    "I do not carry cash and the card reader might be flaky",
+    "There is already a chain coffee shop in the building lobby"
+  ],
+  "habits": [
+    "walks past the same spot twice a day on the commute",
+    "orders a large latte, no sugar, before checking email",
+    "usually buys one more coffee after lunch, out of habit",
+    "keeps a mental budget for work-day coffee"
+  ]
+}
