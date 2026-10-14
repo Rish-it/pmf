@@ -1,7 +1,7 @@
 {
   "name": "pmf",
-  "description": "Thirteen product-market fit skills that take a business from idea to launch in Claude Code, Codex and OpenCode: an adversarial pressure test, real market research, a simulated buyer panel, the offer and its price, unit economics, a real-world demand test with pre-set criteria, the smallest MVP with agentic coding discipline, marketing, brand, operations, the launch and the compiled plan.",
-  "version": "2.0.0",
+  "description": "Thirteen agent skills that take a business idea to launch on real evidence, in Claude Code, Codex and OpenCode: a pressure test, sourced market research, a buyer panel, the offer and its price, unit economics, a real demand test with criteria locked before it runs, the smallest MVP, marketing, brand, operations, launch and a computed verdict.",
+  "version": "3.0.0",
   "author": {
     "name": "Rishit Sharma",
     "url": "https://github.com/Rish-it"

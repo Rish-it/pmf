@@ -9,11 +9,11 @@ SKILLS = ["pmf", "pmf-pressure", "pmf-research", "pmf-panel", "pmf-offer",
           "pmf-numbers", "pmf-test", "pmf-build", "pmf-marketing", "pmf-brand",
           "pmf-ops", "pmf-launch", "pmf-plan"]
 
-ABOUT = ("Thirteen product-market fit skills that take a business from idea to launch in "
-         "Claude Code, Codex and OpenCode: an adversarial pressure test, real market "
-         "research, a simulated buyer panel, the offer and its price, unit economics, "
-         "a real-world demand test with pre-set criteria, the smallest MVP with agentic "
-         "coding discipline, marketing, brand, operations, the launch and the compiled plan.")
+ABOUT = ("Thirteen agent skills that take a business idea to launch on real evidence, "
+         "in Claude Code, Codex and OpenCode: a pressure test, sourced market "
+         "research, a buyer panel, the offer and its price, unit economics, a real "
+         "demand test with criteria locked before it runs, the smallest MVP, "
+         "marketing, brand, operations, launch and a computed verdict.")
 
 BANNED = ("$ARGUMENTS", "CLAUDE_", "claude_skill_dir", "\u2014")
 
@@ -161,7 +161,7 @@ class Readme(unittest.TestCase):
     def test_readme_contract(self):
         with open(os.path.join(ROOT, "README.md"), encoding="utf-8") as fh:
             readme = " ".join(fh.read().split())
-        self.assertTrue(readme.startswith("# pmf:"))
+        self.assertTrue(readme.startswith("# pmf: product-market fit skills"))
         for line in (
             ABOUT,
             "## Install",

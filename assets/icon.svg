@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="112" height="112">
+  <title>pmf</title>
+  <rect width="512" height="512" rx="116" fill="#0A4D8C"/>
+  <rect x="104" y="318" width="56" height="90" rx="16" fill="#ffffff" opacity="0.28"/>
+  <rect x="200" y="262" width="56" height="146" rx="16" fill="#ffffff" opacity="0.28"/>
+  <rect x="296" y="206" width="56" height="202" rx="16" fill="#ffffff" opacity="0.28"/>
+  <path d="M120 250 L212 340 L398 126" fill="none" stroke="#ffffff" stroke-width="48" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="398" cy="126" r="30" fill="#7FD4A8"/>
+</svg>

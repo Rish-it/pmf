@@ -1,7 +1,7 @@
 {
   "name": "pmf",
-  "version": "2.0.0",
-  "description": "Thirteen product-market fit skills that take a business from idea to launch in Claude Code, Codex and OpenCode: an adversarial pressure test, real market research, a simulated buyer panel, the offer and its price, unit economics, a real-world demand test with pre-set criteria, the smallest MVP with agentic coding discipline, marketing, brand, operations, the launch and the compiled plan.",
+  "version": "3.0.0",
+  "description": "Thirteen agent skills that take a business idea to launch on real evidence, in Claude Code, Codex and OpenCode: a pressure test, sourced market research, a buyer panel, the offer and its price, unit economics, a real demand test with criteria locked before it runs, the smallest MVP, marketing, brand, operations, launch and a computed verdict.",
   "author": {
     "name": "Rishit Sharma",
     "url": "https://github.com/Rish-it"
@@ -21,8 +21,8 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "PMF",
-    "shortDescription": "Product-market fit skills from idea to launch",
-    "longDescription": "Pressure test an idea, research the market with real sources, run a simulated buyer panel, build the offer and its price, do the unit economics, run a real-world demand test with pre-set criteria, build the smallest MVP with agentic coding discipline, plan marketing, brand, operations and launch, and compile a verdict from real evidence.",
+    "shortDescription": "Take a business idea to launch on real evidence",
+    "longDescription": "Pressure-test an idea, research the market from real sources, run a buyer panel, set the offer and price, work the unit economics, run a real demand test with criteria locked before it runs, build the smallest MVP, plan marketing, brand, operations and launch, and compile a verdict from real evidence.",
     "developerName": "Rishit Sharma",
     "category": "Productivity",
     "capabilities": [
@@ -34,6 +34,8 @@
       "Pressure-test this idea.",
       "Compile my business plan."
     ],
-    "brandColor": "#0A4D8C"
+    "brandColor": "#0A4D8C",
+    "composerIcon": "./assets/icon.png",
+    "logo": "./assets/icon.png"
   }
 }
