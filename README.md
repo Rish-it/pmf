@@ -93,9 +93,13 @@ whether anyone pays, then build the product slice.
 deposit, a pop-up with real prices, three paid pilots, or a waitlist that
 ends in a paid founding offer. Each test is written into
 `pmf/experiments.json` with its method, audience, price and the go/no-go
-criteria BEFORE it runs. When the actuals land (exposure, paid conversions,
-cost, notes), the tool computes the outcome: pass when every criterion is
-met, mixed when some are, fail when none. After launch, the same log holds
+criteria BEFORE it runs; `check` locks those criteria in
+`pmf/experiments.lock.json`, and a result for an unlocked or edited test is
+rejected. When the actuals land (exposure, paid conversions, refunds, cost,
+notes), the tool computes the outcome: pass when every criterion is met,
+mixed when some are, fail when none. Paid counts are net of refunds, a demand
+test needs at least 5 paid, and rate bars are judged on the low end of a 95%
+interval, so a tiny sample cannot pass on luck. After launch, the same log holds
 retention tests (repeat purchase by cohort), because a first purchase is
 interest and a repeat is a market.
 
@@ -220,7 +224,8 @@ install.sh              put the skills in every agent's skills folder
 Your own files live in `pmf/` in your project. The skills read each other's.
 The state contract is `idea.md`, `pressure.md`, `pressure/`, `research/`,
 `customer.json`, `pitch.md`, `panel/` (with `runs/`), `offer.md`,
-`numbers.json`, `numbers.md`, `experiments.json`, `test.md`, `build.md`,
+`numbers.json`, `numbers.md`, `experiments.json`, `experiments.lock.json`,
+`test.md`, `build.md`,
 `marketing.md`, `brand.md`, `ops.md`, `launch.md`, `plan.md`, `summary.md`
 and `status.json` (the ledger the `pmf` skill owns). Each file has one owning
 skill. Product code from `pmf-build` lives in the project's normal source

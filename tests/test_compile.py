@@ -13,6 +13,7 @@ STATUS = tool("pmf", "status.py")
 EXP_ECON = tool("pmf-numbers", "unit_economics.py")
 EXAMPLE_NUMBERS = os.path.join(SKILLS_DIR, "pmf-numbers", "example.json")
 EXAMPLE_EXPERIMENTS = os.path.join(SKILLS_DIR, "pmf-test", "experiments.example.json")
+EXPERIMENTS = tool("pmf-test", "experiments.py")
 
 
 def run(args, cwd):
@@ -41,17 +42,27 @@ class CompileTest(unittest.TestCase):
             json.dump({"n": n, "answered": answered, "coverage": coverage,
                        "buy_rate": buy_rate}, fh)
 
-    def add_experiments(self):
-        shutil.copy(EXAMPLE_EXPERIMENTS, os.path.join(self.pmf, "experiments.json"))
-
-    def fail_the_experiment(self):
-        self.add_experiments()
-        path = os.path.join(self.pmf, "experiments.json")
-        with open(path) as fh:
+    def add_experiments(self, change=None):
+        """Plan the tests, lock them with check, then record the results."""
+        with open(EXAMPLE_EXPERIMENTS) as fh:
             data = json.load(fh)
-        data["experiments"][0]["results"]["paid_conversions"] = 3
+        if change:
+            change(data["experiments"])
+        path = os.path.join(self.pmf, "experiments.json")
+        planned = json.loads(json.dumps(data))
+        for entry in planned["experiments"]:
+            entry.pop("results", None)
+        with open(path, "w") as fh:
+            json.dump(planned, fh)
+        subprocess.run([sys.executable, EXPERIMENTS, "check", "--dir", self.pmf],
+                       check=True, capture_output=True, text=True)
         with open(path, "w") as fh:
             json.dump(data, fh)
+
+    def fail_the_experiment(self):
+        def change(tests):
+            tests[0]["results"].update({"paid_conversions": 3, "refunds": 0})
+        self.add_experiments(change)
 
     def plan(self):
         with open(os.path.join(self.pmf, "plan.md")) as fh:
@@ -83,8 +94,62 @@ class Verdicts(CompileTest):
         self.assertEqual(result.returncode, 1)
         plan = self.plan()
         self.assertIn("**Verdict: Not yet**", plan)
-        self.assertIn("Real test E1: min_paid | FAIL | 3 paid against a bar of 10", plan)
+        self.assertIn("Real test E1: min_paid | FAIL | 3 paid after refunds against a bar of 10", plan)
         self.assertIn("Change one thing against the missed criteria", plan)
+
+    def test_later_retention_pass_cannot_hide_a_failed_demand_test(self):
+        """Review probe: 0 of 500 buyers, then 1 repeat of 2, compiled to Validated."""
+        def change(tests):
+            tests[0]["results"].update({"paid_conversions": 0, "refunds": 0})
+            tests[1]["criteria"] = {"min_repeat_rate": 0.1}
+            tests[1]["results"] = {"date": "2026-11-20", "cohort": 30, "repeat_buyers": 20}
+        self.add_experiments(change)
+        result = run(["--dir", "pmf", "--check"], self.dir)
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("Verdict: Not yet", result.stdout)
+        self.assertIn("real test E1: FAIL", result.stdout)
+
+    def test_failed_retention_blocks_validated(self):
+        def change(tests):
+            tests[1]["results"] = {"date": "2026-11-20", "cohort": 30, "repeat_buyers": 3}
+        self.add_experiments(change)
+        result = run(["--dir", "pmf", "--check"], self.dir)
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("Verdict: Not yet", result.stdout)
+        self.assertIn("Real test E2: min_repeat_rate", result.stdout)
+
+    def test_a_test_below_the_plan_price_cannot_validate(self):
+        """Review probe: a test at 0.01 validated a 4.50 plan."""
+        def change(tests):
+            tests[0]["price"] = 3.0
+        self.add_experiments(change)
+        result = run(["--dir", "pmf", "--check"], self.dir)
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("[FAIL] Real test E1: price: tested at 3.00 against a plan price of 4.50",
+                      result.stdout)
+
+    def test_criteria_moved_after_the_lock_are_incomplete(self):
+        self.add_experiments()
+        path = os.path.join(self.pmf, "experiments.json")
+        with open(path) as fh:
+            data = json.load(fh)
+        data["experiments"][0]["criteria"]["min_paid"] = 5
+        with open(path, "w") as fh:
+            json.dump(data, fh)
+        result = run(["--dir", "pmf"], self.dir)
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("**Verdict: Incomplete**", self.plan())
+        self.assertIn("changed after they were locked", self.plan())
+
+    def test_ungrounded_panel_objections_are_uncertain(self):
+        path = os.path.join(self.pmf, "panel", "results.json")
+        with open(path) as fh:
+            data = json.load(fh)
+        data["grounded_objections"] = [1, 6]
+        with open(path, "w") as fh:
+            json.dump(data, fh)
+        run(["--dir", "pmf"], self.dir)
+        self.assertIn("Panel objections without a real buyer quote behind them: 5 of 6", self.plan())
 
     def test_panel_alone_cannot_validate(self):
         self.write_panel(1.0)

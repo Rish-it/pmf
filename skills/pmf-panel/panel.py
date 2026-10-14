@@ -101,6 +101,19 @@ def valid_customer(c):
         for field in ("name", "share", "how"):
             if field not in beh:
                 raise PanelError("customer file: a behaviour is missing '%s'" % field)
+    for obj in c["objections"]:
+        if isinstance(obj, dict):
+            if set(obj) != {"text", "source"} or not all(
+                    isinstance(obj[k], str) and obj[k].strip() for k in obj):
+                raise PanelError("customer file: a sourced objection is {\"text\": ..., \"source\": "
+                                 "<link to the real quote>}")
+        elif not isinstance(obj, str) or not obj.strip():
+            raise PanelError("customer file: each objection is a line of text or a sourced object")
+
+
+def grounded(objections):
+    """[sourced, total]: how many objections trace to a real buyer's words."""
+    return [sum(1 for o in objections if isinstance(o, dict)), len(objections)]
 
 
 def deal(customer, n, rng):
@@ -115,7 +128,7 @@ def deal(customer, n, rng):
         behs += [beh] * count
     rng.shuffle(segs)
     rng.shuffle(behs)
-    objections = customer["objections"]
+    objections = [o["text"] if isinstance(o, dict) else o for o in customer["objections"]]
     habits = customer.get("habits") or []
     buyers = []
     for i in range(n):
@@ -227,6 +240,7 @@ def cmd_init(args):
         target = old.get("target", "")
         customer_hash = old.get("customer_sha256", "")
         seed = old.get("seed")
+        sourced = old.get("grounded_objections")
     else:
         if not args.customer:
             raise PanelError("give --customer, or --reuse with a previous panel folder")
@@ -239,6 +253,7 @@ def cmd_init(args):
         target = customer["target"]
         customer_hash = sha256_file(args.customer)
         seed = args.seed
+        sourced = grounded(customer["objections"])
 
     os.makedirs(args.dir, exist_ok=True)
     archived = archive_run(args.dir)
@@ -263,6 +278,7 @@ def cmd_init(args):
         "created": _now(),
         "pitch_sha256": sha256_file(args.pitch),
         "customer_sha256": customer_hash,
+        "grounded_objections": sourced,
         "buyers": buyers,
     }
     with open(os.path.join(args.dir, "manifest.json"), "w", encoding="utf-8") as fh:
@@ -420,6 +436,7 @@ def cmd_tally(args):
         "created": _now(),
         "pitch_sha256": manifest.get("pitch_sha256", ""),
         "customer_sha256": manifest.get("customer_sha256", ""),
+        "grounded_objections": manifest.get("grounded_objections"),
     }
     with open(os.path.join(args.dir, "results.json"), "w", encoding="utf-8") as fh:
         json.dump(results, fh, indent=2)

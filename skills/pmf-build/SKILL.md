@@ -28,8 +28,9 @@ cost), `pmf/test.md` and `pmf/experiments.json` (did real buyers pay?),
 (what the first users will care about). If offer or numbers are missing, say
 so and stop; building before those is spending before thinking.
 
-Build only on evidence: the latest real test in `pmf/experiments.json` must
-have passed its criteria. If it failed or has not run, say so and recommend
+Build only on evidence: `compile.py --check` in the `pmf-plan` skill's
+folder must say Validated (the latest demand test passed its locked
+criteria at the plan price). If it failed or has not run, say so and recommend
 `pmf-test` instead. If the user chooses to build anyway, record that decision
 in `pmf/build.md` in one line ("building without a passed test, because ...");
 the compiled verdict will not count it as validated.

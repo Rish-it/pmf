@@ -6,6 +6,14 @@ Reads pmf/experiments.json: every demand or retention test the business ran
 then computes each result: which criteria were met, the conversion, the
 revenue collected, the cost per paying customer, the repeat rate.
 
+The criteria are locked: `check` fingerprints every test that has no results
+yet into pmf/experiments.lock.json. A test with results but no lock, or whose
+criteria, price, kind or creation date changed after the lock, is an error.
+
+Paid counts are net of refunds. Rate criteria are judged on the lower end of
+a 95% Wilson interval, so a tiny sample cannot pass on luck. A demand test
+needs min_paid of at least MIN_PAID_FLOOR.
+
 The outcome is computed, never written: pass when every criterion is met,
 fail when none is, mixed when some are. A failed test is a result, not an
 error.
@@ -16,7 +24,9 @@ Usage:
 """
 
 import argparse
+import hashlib
 import json
+import math
 import os
 import sys
 from datetime import date
@@ -29,9 +39,12 @@ CRITERIA = {
 ENTRY_FIELDS = ("id", "kind", "created", "hypothesis", "method", "audience",
                 "price", "criteria", "results", "notes")
 RESULT_FIELDS = {
-    "demand": ("date", "exposure", "paid_conversions", "cost", "notes"),
+    "demand": ("date", "exposure", "paid_conversions", "refunds", "cost", "notes"),
     "retention": ("date", "cohort", "repeat_buyers", "notes"),
 }
+LOCK = "experiments.lock.json"
+MIN_PAID_FLOOR = 5
+Z95 = 1.96
 
 
 class ExperimentsError(Exception):
@@ -98,11 +111,14 @@ def _criteria(raw, where, kind):
         if key not in allowed:
             raise ExperimentsError("%s.criteria: unknown criterion '%s' (a %s test allows: %s)"
                                    % (where, key, kind, ", ".join(allowed)))
+    if kind == "demand" and "min_paid" not in raw:
+        raise ExperimentsError("%s.criteria: a demand test needs min_paid (at least %d)"
+                               % (where, MIN_PAID_FLOOR))
     out = {}
     for key, value in raw.items():
         w = "%s.criteria.%s" % (where, key)
         if key == "min_paid":
-            out[key] = _count(value, w, 1)
+            out[key] = _count(value, w, MIN_PAID_FLOOR)
         elif key in ("min_conversion", "min_repeat_rate"):
             out[key] = _number(value, w, above=0.0, maximum=1.0)
         else:  # max_cost_per_paid
@@ -128,7 +144,11 @@ def _results(raw, where, kind, created):
         if paid > exposure:
             raise ExperimentsError("%s.results: paid_conversions (%d) is above exposure (%d)"
                                    % (where, paid, exposure))
-        results.update({"exposure": exposure, "paid_conversions": paid,
+        refunds = _count(raw.get("refunds"), where + ".results.refunds", 0)
+        if refunds > paid:
+            raise ExperimentsError("%s.results: refunds (%d) is above paid_conversions (%d)"
+                                   % (where, refunds, paid))
+        results.update({"exposure": exposure, "paid_conversions": paid, "refunds": refunds,
                         "cost": _number(raw.get("cost"), where + ".results.cost", minimum=0.0)})
     else:
         cohort = _count(raw.get("cohort"), where + ".results.cohort", 1)
@@ -190,23 +210,88 @@ def validate_all(raw):
     return entries, problems
 
 
+def net_paid(results):
+    return results["paid_conversions"] - results["refunds"]
+
+
+def wilson_low(hits, n):
+    """Lower end of the 95% Wilson interval for hits out of n."""
+    p = hits / float(n)
+    z2 = Z95 * Z95
+    centre = p + z2 / (2 * n)
+    spread = Z95 * math.sqrt(p * (1 - p) / n + z2 / (4.0 * n * n))
+    return max(0.0, (centre - spread) / (1 + z2 / n))
+
+
+def _judge_rate(hits, n, target, what):
+    rate, low = hits / float(n), wilson_low(hits, n)
+    return low >= target, rate, ("%s %s (95%% lower bound %s, from %d of %d) against a bar of %s"
+                                 % (_rate(rate), what, _rate(low), hits, n, _rate(target)))
+
+
+def fingerprint(entry):
+    """The numbers a test is judged by, frozen before it runs."""
+    frozen = {"kind": entry["kind"], "created": entry["created"].isoformat(),
+              "price": entry.get("price"), "criteria": entry["criteria"]}
+    return hashlib.sha256(json.dumps(frozen, sort_keys=True).encode("utf-8")).hexdigest()
+
+
+def read_lock(dirpath):
+    path = os.path.join(dirpath, LOCK)
+    if not os.path.isfile(path):
+        return {}
+    try:
+        with open(path, encoding="utf-8") as fh:
+            data = json.load(fh)
+    except ValueError as exc:
+        raise ExperimentsError("%s is not valid JSON: %s" % (path, exc))
+    if not isinstance(data, dict) or not all(
+            isinstance(v, dict) and isinstance(v.get("sha256"), str) for v in data.values()):
+        raise ExperimentsError("%s is not a lock file; it maps each test id to its fingerprint" % path)
+    return data
+
+
+def lock_problems(entries, lock):
+    """A result needs a lock taken before it, and a lock never moves."""
+    problems = []
+    for entry in entries:
+        rec = lock.get(entry["id"])
+        if rec is None:
+            if "results" in entry:
+                problems.append("%s has results but its criteria were never locked; run check "
+                                "before a test runs, and log this one again as a new id" % entry["id"])
+        elif rec["sha256"] != fingerprint(entry):
+            problems.append("%s: the criteria, price, kind or creation date changed after they were "
+                            "locked on %s; restore them or log a new test with a new id"
+                            % (entry["id"], rec.get("locked_on", "?")))
+    return problems
+
+
+def validate_dir(dirpath):
+    """Load, validate and lock-check pmf/experiments.json. Return (entries, problems, lock)."""
+    raw = load(os.path.join(dirpath, "experiments.json"))
+    entries, problems = validate_all(raw)
+    lock = read_lock(dirpath)
+    if not problems:
+        problems = lock_problems(entries, lock)
+    return entries, problems, lock
+
+
 def _judge(name, target, entry, results):
     """Return (met, actual, detail) for one criterion. The actual is None when not computable."""
     if name == "min_paid":
-        paid = results["paid_conversions"]
-        return paid >= target, paid, "%d paid against a bar of %d" % (paid, target)
+        paid = net_paid(results)
+        return paid >= target, paid, "%d paid after refunds against a bar of %d" % (paid, target)
     if name == "min_conversion":
-        rate = results["paid_conversions"] / results["exposure"]
-        return rate >= target, rate, "%s conversion against a bar of %s" % (_rate(rate), _rate(target))
+        return _judge_rate(net_paid(results), results["exposure"], target, "conversion")
     if name == "max_cost_per_paid":
-        paid = results["paid_conversions"]
+        paid = net_paid(results)
         if not paid:
-            return False, None, "no paid conversions to divide the cost by"
+            return False, None, "no paid conversions after refunds to divide the cost by"
         per = results["cost"] / paid
         return per <= target, per, "cost %.2f per paid against a ceiling of %.2f" % (per, target)
     if name == "min_repeat_rate":
-        rate = results["repeat_buyers"] / results["cohort"]
-        return rate >= target, rate, "%s repeat against a bar of %s" % (_rate(rate), _rate(target))
+        return _judge_rate(results["repeat_buyers"], results["cohort"], target, "repeat")
     raise ExperimentsError("unknown criterion: %s" % name)
 
 
@@ -241,7 +326,7 @@ def evaluate(entry):
         status = "mixed"
     metrics = {}
     if entry["kind"] == "demand":
-        paid, exposure = results["paid_conversions"], results["exposure"]
+        paid, exposure = net_paid(results), results["exposure"]
         metrics["conversion_rate"] = paid / exposure
         metrics["cost_per_paid"] = (results["cost"] / paid) if paid else None
         metrics["revenue_collected"] = paid * entry["price"]
@@ -306,9 +391,9 @@ def report_text(entries):
                           "yes" if row["met"] else "no"))
         out.append("")
         if entry["kind"] == "demand":
-            out.append("- Exposure: %d reached, %d paid, %s conversion."
+            out.append("- Exposure: %d reached, %d paid, %d refunded, %s conversion."
                        % (entry["results"]["exposure"], entry["results"]["paid_conversions"],
-                          _rate(result["metrics"]["conversion_rate"])))
+                          entry["results"]["refunds"], _rate(result["metrics"]["conversion_rate"])))
             cpp = result["metrics"]["cost_per_paid"]
             out.append("- Test cost: %.2f; revenue collected: %.2f; net: %.2f%s."
                        % (entry["results"]["cost"], result["metrics"]["revenue_collected"],
@@ -347,16 +432,22 @@ def main():
             p.add_argument("--out", help="default: <dir>/test.md")
     args = parser.parse_args()
 
-    path = os.path.join(args.dir, "experiments.json")
     try:
-        raw = load(path)
+        entries, problems, lock = validate_dir(args.dir)
     except ExperimentsError as exc:
         sys.exit("experiments.py: %s" % exc)
-    entries, problems = validate_all(raw)
     if problems:
         _report_problems(problems)
         sys.exit(1)
     if args.command == "check":
+        fresh = [e for e in entries if e["id"] not in lock and "results" not in e]
+        for entry in fresh:
+            lock[entry["id"]] = {"sha256": fingerprint(entry), "locked_on": date.today().isoformat()}
+            print("locked %s: its criteria cannot change from here" % entry["id"])
+        if fresh:
+            with open(os.path.join(args.dir, LOCK), "w", encoding="utf-8") as fh:
+                json.dump(lock, fh, indent=2, sort_keys=True)
+                fh.write("\n")
         evaluated = evaluate_all(entries)
         for entry, result in evaluated:
             print(_summary_line(entry, result))

@@ -37,15 +37,18 @@ and what blocks a full plan, and writes nothing. The verdicts and what
 computes them:
 
 - **Incomplete**: `numbers.json` is missing or invalid, or
-  `experiments.json` is malformed. The blockers are listed.
+  `experiments.json` is malformed, or a test has results without a lock or
+  with criteria moved after the lock. The blockers are listed.
 - **Not yet**: the economics fail a check (contribution, year 1 operating,
-  break-even against capacity), or the latest real test did not meet its
-  criteria. A failed real test beats profitable projections, always; that is
+  break-even against capacity), the latest demand test or the latest
+  retention test did not meet its criteria, or the demand test charged more
+  than 10% under the plan price. A failed real test beats profitable projections, always; that is
   the point of the gate.
 - **Projected**: the economics work; no real test has a result yet (planned
   tests and the simulated panel are context, not evidence).
-- **Validated**: the economics work and the latest real-world test met every
-  criterion it was given before it ran.
+- **Validated**: the economics work, the latest demand test met every
+  criterion locked before it ran at the plan's price, and no later retention
+  test failed. A retention pass alone never validates.
 
 The simulated panel never gates the verdict: a simulated buy rate is not a
 conversion forecast. Coverage below the bar (default 80%, `--min-coverage`)

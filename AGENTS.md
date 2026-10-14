@@ -56,7 +56,8 @@ tests/                 the tests for every tool and for this repo's rules
 Every skill in the pack reads and writes one `pmf/` folder in the user's
 project: `idea.md`, `pressure.md`, `pressure/`, `research/`, `customer.json`, `pitch.md`,
 `panel/` (with the previous runs under `panel/runs/`), `offer.md`,
-`numbers.json`, `numbers.md`, `experiments.json`, `test.md`, `build.md`,
+`numbers.json`, `numbers.md`, `experiments.json`, `experiments.lock.json`,
+`test.md`, `build.md`,
 `marketing.md`, `brand.md`, `ops.md`, `launch.md`, `plan.md`, `summary.md`
 and `status.json` (the content-hash ledger the `pmf` skill owns through
 `status.py`; stages append to it through that one tool). Two skills never
@@ -72,7 +73,8 @@ change the standard-library-only, offline rule for the six Python tools.
 normal source folders.
 
 The evidence chain: `pmf-test` writes `experiments.json` with criteria set
-before each test runs; `pmf-plan`'s compiler imports the outcome evaluator
+before each test runs, and its `check` fingerprints each planned test into
+`experiments.lock.json`, so criteria cannot move once results exist; `pmf-plan`'s compiler imports the outcome evaluator
 from `pmf-test` and the calculation engine from `pmf-numbers`, so the verdict
 cannot drift from the inputs. A changed input marks dependents stale through
 `status.json`; stale artifacts must rerun before the plan is trusted.

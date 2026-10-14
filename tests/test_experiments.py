@@ -22,7 +22,7 @@ DEMAND_OK = {
     "price": 4.5,
     "criteria": {"min_paid": 10, "max_cost_per_paid": 25},
     "results": {"date": "2026-10-19", "exposure": 480,
-                "paid_conversions": 12, "cost": 150},
+                "paid_conversions": 12, "refunds": 0, "cost": 150},
 }
 
 
@@ -39,8 +39,20 @@ class ExperimentsToolTest(unittest.TestCase):
     def tearDown(self):
         self.tmp.cleanup()
 
-    def write(self, data):
-        with open(os.path.join(self.dir, "experiments.json"), "w") as fh:
+    def write(self, data, lock=True, keep_lock=False):
+        """Log the tests the honest way: plan them, lock them with check, then add results."""
+        path = os.path.join(self.dir, "experiments.json")
+        lock_path = os.path.join(self.dir, "experiments.lock.json")
+        if not keep_lock and os.path.isfile(lock_path):
+            os.unlink(lock_path)
+        if lock:
+            planned = copy.deepcopy(data)
+            for entry in planned["experiments"]:
+                entry.pop("results", None)
+            with open(path, "w") as fh:
+                json.dump(planned, fh)
+            run(["check", "--dir", self.dir])
+        with open(path, "w") as fh:
             json.dump(data, fh)
 
     def mutate(self, change):
@@ -49,9 +61,9 @@ class ExperimentsToolTest(unittest.TestCase):
         self.write({"experiments": [entry]})
 
     def test_example_log_passes_check(self):
-        os.makedirs(os.path.join(self.dir, "x"), exist_ok=True)
-        shutil.copy(EXAMPLE, os.path.join(self.dir, "x", "experiments.json"))
-        result = run(["check", "--dir", os.path.join(self.dir, "x")])
+        with open(EXAMPLE) as fh:
+            self.write(json.load(fh))
+        result = run(["check", "--dir", self.dir])
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("E1 demand, created 2026-10-12, results 2026-10-19: PASS (2 of 2 criteria met)",
                       result.stdout)
@@ -79,11 +91,10 @@ class ExperimentsToolTest(unittest.TestCase):
 
     def test_zero_paid_fails_the_cost_criterion(self):
         def change(entry):
-            entry["criteria"] = {"max_cost_per_paid": 25}
             entry["results"]["paid_conversions"] = 0
         self.mutate(change)
         result = run(["check", "--dir", self.dir])
-        self.assertIn("FAIL (0 of 1 criteria met)", result.stdout)
+        self.assertIn("FAIL (0 of 2 criteria met)", result.stdout)
 
     def test_string_number_is_rejected(self):
         def change(entry):
@@ -127,7 +138,7 @@ class ExperimentsToolTest(unittest.TestCase):
 
     def test_rate_above_one_is_rejected(self):
         def change(entry):
-            entry["criteria"] = {"min_conversion": 2}
+            entry["criteria"] = {"min_paid": 10, "min_conversion": 2}
         self.mutate(change)
         result = run(["check", "--dir", self.dir])
         self.assertEqual(result.returncode, 1)
@@ -188,6 +199,83 @@ class ExperimentsToolTest(unittest.TestCase):
         self.assertEqual(result["status"], "pass")
         self.assertEqual(result["metrics"]["cost_per_paid"], 12.5)
         self.assertEqual(result["metrics"]["revenue_collected"], 54.0)
+
+    def test_one_paid_friend_cannot_be_the_bar(self):
+        """Review probe: min_paid 1 at exposure 1 compiled to Validated."""
+        def change(entry):
+            entry["criteria"] = {"min_paid": 1}
+        self.mutate(change)
+        result = run(["check", "--dir", self.dir])
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("min_paid must be 5 or more", result.stdout)
+
+    def test_demand_test_needs_min_paid(self):
+        def change(entry):
+            entry["criteria"] = {"max_cost_per_paid": 25}
+        self.mutate(change)
+        result = run(["check", "--dir", self.dir])
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("a demand test needs min_paid", result.stdout)
+
+    def test_refunds_come_off_the_paid_count(self):
+        """Review probe: the example counted 12 paid while 3 asked for refunds."""
+        def change(entry):
+            entry["results"]["refunds"] = 3
+        self.mutate(change)
+        result = run(["check", "--dir", self.dir])
+        self.assertIn("MIXED (1 of 2 criteria met)", result.stdout)
+
+    def test_refunds_above_paid_are_rejected(self):
+        def change(entry):
+            entry["results"]["refunds"] = 13
+        self.mutate(change)
+        result = run(["check", "--dir", self.dir])
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("refunds (13) is above paid_conversions", result.stdout)
+
+    def test_tiny_cohort_cannot_pass_a_rate(self):
+        """Review probe: 1 repeat of 2 passed a 40% bar."""
+        entry = {
+            "id": "E2", "kind": "retention", "created": "2026-10-25",
+            "hypothesis": "Buyers return.", "method": "loyalty cards", "audience": "first buyers",
+            "criteria": {"min_repeat_rate": 0.4},
+            "results": {"date": "2026-11-20", "cohort": 2, "repeat_buyers": 1},
+        }
+        self.write({"experiments": [entry]})
+        result = run(["check", "--dir", self.dir])
+        self.assertIn("FAIL (0 of 1 criteria met)", result.stdout)
+
+    def test_wilson_lower_bound(self):
+        experiments = load("pmf-test", "experiments")
+        self.assertAlmostEqual(experiments.wilson_low(1, 2), 0.0945, places=3)
+        self.assertAlmostEqual(experiments.wilson_low(50, 100), 0.4038, places=3)
+        self.assertEqual(experiments.wilson_low(0, 10), 0.0)
+
+    def test_check_locks_a_planned_test(self):
+        entry = copy.deepcopy(DEMAND_OK)
+        del entry["results"]
+        self.write({"experiments": [entry]}, lock=False)
+        result = run(["check", "--dir", self.dir])
+        self.assertIn("locked E1", result.stdout)
+        with open(os.path.join(self.dir, "experiments.lock.json")) as fh:
+            self.assertIn("E1", json.load(fh))
+
+    def test_results_without_a_lock_are_rejected(self):
+        self.write({"experiments": [copy.deepcopy(DEMAND_OK)]}, lock=False)
+        result = run(["check", "--dir", self.dir])
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("never locked", result.stdout)
+
+    def test_criteria_moved_after_the_lock_are_rejected(self):
+        """Review probe: criteria could be edited after the results came in."""
+        entry = copy.deepcopy(DEMAND_OK)
+        entry["results"]["paid_conversions"] = 8
+        self.write({"experiments": [entry]})
+        entry["criteria"]["min_paid"] = 8
+        self.write({"experiments": [entry]}, lock=False, keep_lock=True)
+        result = run(["check", "--dir", self.dir])
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("changed after they were locked", result.stdout)
 
     def test_missing_file_is_an_error(self):
         result = run(["check", "--dir", os.path.join(self.dir, "nowhere")])

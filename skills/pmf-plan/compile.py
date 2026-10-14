@@ -5,7 +5,8 @@ Reads the projected economics (numbers.json), the demand evidence
 (experiments.json when it exists, else the simulated panel) and everything
 else the stages wrote. The verdict is computed, never written:
 
-  Validated   the economics work and the latest real-world test met its criteria
+  Validated   the economics work, the latest demand test met its locked
+              criteria at the plan's price, and no later retention test failed
   Projected   the economics work; no real-world test has a result yet
   Not yet     a check fails (the failing numbers are listed)
   Incomplete  numbers.json is missing or invalid
@@ -49,6 +50,7 @@ ARTIFACTS = [
     ("launch.md", "pmf-launch"),
 ]
 
+PRICE_TOLERANCE = 0.10  # a test may charge up to 10% under the plan price and still count
 CONDITION_RE = re.compile(r"^\s*[-*]\s*\[([ xX])\]\s*(.+?)\s*$")
 FRESHNESS = {"fresh": "fresh", "stale": "STALE", "changed": "changed",
              "missing": "MISSING"}
@@ -157,8 +159,7 @@ def main():
     entries, latest, planned, exp_problem = [], None, [], None
     if os.path.isfile(experiments_path) and exp:
         try:
-            raw = exp.load(experiments_path)
-            entries, exp_problems = exp.validate_all(raw)
+            entries, exp_problems, _ = exp.validate_dir(dirpath)
             if exp_problems:
                 exp_problem = "; ".join(exp_problems)
         except exp.ExperimentsError as exc:
@@ -169,8 +170,11 @@ def main():
         else:
             done = [(e, exp.evaluate(e)) for e in entries if "results" in e]
             done.sort(key=lambda pair: pair[0]["results"]["date"])
-            if done:
-                latest = done[-1]  # the latest result drives the verdict; the rest are listed
+            # the latest result of each kind decides; a failure of either kind blocks
+            last = {pair[0]["kind"]: pair for pair in done}
+            decisive = [last[k] for k in exp.KINDS if k in last]
+            failing = [pair for pair in decisive if pair[1]["status"] != "pass"]
+            latest = failing[0] if failing else last.get("demand")
             planned = [e for e in entries if "results" not in e]
 
     panel = None
@@ -204,6 +208,11 @@ def main():
         for row in result["criteria"]:
             checks.append(("Real test %s: %s" % (entry["id"], row["criterion"]), row["met"],
                            row["detail"]))
+        if analysis and entry["kind"] == "demand":
+            floor = analysis["price"] * (1 - PRICE_TOLERANCE)
+            checks.append(("Real test %s: price" % entry["id"], entry["price"] >= floor,
+                           "tested at %.2f against a plan price of %.2f (at least %.2f counts)"
+                           % (entry["price"], analysis["price"], floor)))
 
     if problems:
         verdict = "Incomplete"
@@ -211,7 +220,7 @@ def main():
         verdict = "Not yet"
     elif latest is None:
         verdict = "Projected"
-    elif latest[1]["status"] == "pass":
+    elif latest[0]["kind"] == "demand" and all(ok for _, ok, _ in checks[3:]):
         verdict = "Validated"
     else:
         verdict = "Not yet"
@@ -268,9 +277,15 @@ def main():
                          "buy rate is not a forecast. The next test is the cheapest way to change this.")
     if latest is None and planned:
         uncertain.append("The real test %s is designed but not run." % planned[0]["id"])
-    if latest is not None and latest[1]["status"] != "pass":
-        missed = ", ".join(row["criterion"] for row in latest[1]["criteria"] if not row["met"])
+    missed = ", ".join(name.split(": ", 1)[1] for name, ok, _ in checks[3:] if not ok)
+    if latest is not None and missed:
         uncertain.append("The latest real test (%s) did not meet: %s." % (latest[0]["id"], missed))
+    sourced_obj = (panel or {}).get("grounded_objections")
+    if sourced_obj and sourced_obj[0] < sourced_obj[1]:
+        uncertain.append("Panel objections without a real buyer quote behind them: %d of %d. "
+                         "Personas built on guesses barely beat strangers; link quotes from "
+                         "research/voice.md in customer.json." % (sourced_obj[1] - sourced_obj[0],
+                                                                  sourced_obj[1]))
     if analysis:
         sourced, total = source_stats(analysis)
         if sourced < total:
@@ -305,7 +320,6 @@ def main():
                   "and pmf-offer if the price or the offer is the problem. A demand test on "
                   "numbers that cannot work proves nothing.")
     elif verdict == "Not yet" and latest is not None:
-        missed = ", ".join(row["criterion"] for row in latest[1]["criteria"] if not row["met"])
         action = ("Change one thing against the missed criteria (%s), then run a new test in "
                   "pmf-test and log it as a new id. One change at a time." % missed)
     elif verdict == "Projected" and planned:

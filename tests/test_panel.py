@@ -110,6 +110,30 @@ class PanelTest(unittest.TestCase):
         self.assertEqual(results["buy_rate"], 0.5)
         self.assertEqual(results["coverage"], 1.0)
         self.assertEqual(results["price"], GOOD_PRICE)
+        self.assertEqual(results["grounded_objections"], [0, 3])
+
+    def test_sourced_objections_are_counted_and_dealt_as_text(self):
+        with open(os.path.join(self.dir, "customer.json")) as fh:
+            customer = json.load(fh)
+        customer["objections"][0] = {"text": "too expensive",
+                                     "source": "https://example.com/review/1"}
+        with open(os.path.join(self.dir, "customer.json"), "w") as fh:
+            json.dump(customer, fh)
+        manifest = self.init("--n", "6")
+        self.assertEqual(manifest["grounded_objections"], [1, 3])
+        for buyer in manifest["buyers"]:
+            self.assertIsInstance(buyer["objection"], str)
+
+    def test_sourced_objection_without_a_source_is_rejected(self):
+        with open(os.path.join(self.dir, "customer.json")) as fh:
+            customer = json.load(fh)
+        customer["objections"][0] = {"text": "too expensive", "source": ""}
+        with open(os.path.join(self.dir, "customer.json"), "w") as fh:
+            json.dump(customer, fh)
+        result = run(["init", "--customer", "customer.json", "--pitch", "pitch.md",
+                      "--dir", "pmf/panel"], self.dir)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("sourced objection", result.stderr)
 
     def test_check_requires_every_answer(self):
         self.init("--n", "4")

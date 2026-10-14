@@ -12,7 +12,8 @@
       "results": {
         "date": "2026-10-19",
         "exposure": 480,
-        "paid_conversions": 12,
+        "paid_conversions": 14,
+        "refunds": 3,
         "cost": 150,
         "notes": "Two offices asked about a weekly tray delivery; three buyers asked for refunds."
       }

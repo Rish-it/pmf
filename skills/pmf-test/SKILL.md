@@ -59,30 +59,38 @@ example next to this file shows the full shape. The fields that matter:
   will pay 4.50 for a cart drink without a discount").
 - `method` and `audience`: what exactly runs and who sees it.
 - `price`: the real price the test charges.
+- `price`: charge the plan price in `pmf/numbers.json`. A test more than 10%
+  under it cannot validate the plan; the compiler checks.
 - `criteria`: the go/no-go numbers, fixed now. The demand criteria:
-  - `min_paid`: how many paid conversions count as a pass. Tie it to
-    `pmf/numbers.json`: enough buyers to cover the test's cost and prove the
-    price, not a rounding error.
+  - `min_paid`: required, at least 5. How many paid conversions, after
+    refunds, count as a pass. Tie it to `pmf/numbers.json`: enough buyers to
+    cover the test's cost and prove the price, not a rounding error.
   - `min_conversion`: optional; only if the exposure number is meaningful.
+    It is judged on the low end of a 95% interval, so with small exposure
+    the real rate must sit well above the bar.
   - `max_cost_per_paid`: the ceiling for reaching and converting one paying
     buyer, from the contribution per unit.
 
 Run `check` now, before the test: it validates the criteria and the shape, so
-a typo cannot waste a week.
+a typo cannot waste a week, and it locks the entry in
+`pmf/experiments.lock.json`. From then on the criteria, price, kind and
+creation date cannot change; results on an unlocked or edited entry are
+rejected. To change a criterion, log a new test with a new id. Never edit or
+delete the lock file.
 
 ## Step 3: run it
 
 Set the test live for the dates written in the entry. While it runs, capture
 exactly four things: how many people were exposed, how many paid, what the
-test cost (ads, page, materials, refunds), and notes in the buyers' own
-words. Count only payments that were not refunded before the results date;
-refunds and near-misses go in `notes`. Do not help the test along (no
+test cost (ads, page, materials), how many payments were refunded before the
+results date, and notes in the buyers' own words. Near-misses go in `notes`. Do not help the test along (no
 discounts that were not part of the offer, no friends counted as buyers).
 
 ## Step 4: record the results
 
-Add the `results` object to the entry: `date`, `exposure`, `paid_conversions`,
-`cost`, `notes`. Then:
+Add the `results` object to the entry: `date`, `exposure`, `paid_conversions`
+(every payment taken), `refunds` (how many of those were given back), `cost`,
+`notes`. The tool counts paid after refunds. Then:
 
 ```bash
 python3 <this skill's folder>/experiments.py check --dir pmf
@@ -109,11 +117,15 @@ a correction is a note, a new condition is a new test with a new id.
 A first purchase is interest; a repeat purchase is a market. After launch
 (`pmf-launch`'s first 30 days), log a `retention` entry: cohort size,
 `repeat_buyers` inside the window, and a `min_repeat_rate` criterion. The
-same rules apply: criteria first, actuals second, outcome computed.
+same rules apply: criteria first, actuals second, outcome computed. The repeat
+rate is judged on the low end of a 95% interval, so a cohort of a handful
+cannot pass. A failed retention test blocks Validated even after a passed
+demand test.
 
 ## Output
 
-`pmf/experiments.json` (the log) and `pmf/test.md` (the computed report).
+`pmf/experiments.json` (the log), `pmf/experiments.lock.json` (the locked
+criteria, written by `check`) and `pmf/test.md` (the computed report).
 Then record the fingerprints, with the status tool in the `pmf` skill's
 folder, so later changes can invalidate this evidence:
 

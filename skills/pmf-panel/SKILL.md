@@ -46,7 +46,12 @@ Write `pmf/customer.json`. Shape (a filled example sits next to this file as
 - `behaviours`: 4 to 8 buying behaviours, each with `name`, `share` and a
   `how` line (daily regular, deal hunter, reads every review, loyal to a
   competitor...).
-- `objections`: the 4 to 8 doubts this buyer really carries.
+- `objections`: the 4 to 8 doubts this buyer really carries. Each is a line of
+  text, or `{"text": ..., "source": <link>}` when a real buyer said it (a quote
+  from `pmf/research/voice.md` or `complaints.md`). The tool records how many
+  are sourced, and the plan lists unsourced ones as uncertainty: personas
+  built on demographics alone barely beat a stranger, while ones built on real
+  buyer words get much closer.
 - `habits` (optional): everyday context lines that make a buyer concrete.
 
 Ground it in real material: the user's own customer knowledge, and if
