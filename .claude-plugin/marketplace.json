@@ -9,7 +9,7 @@
   "plugins": [
     {
       "name": "pmf",
-      "description": "Twelve product-market fit skills that take a business from idea to launch: pressure test, research, a simulated buyer panel, offer and price, unit economics, the smallest MVP, marketing, brand, operations, launch and the compiled plan.",
+      "description": "Thirteen product-market fit skills that take a business from idea to launch: pressure test, research, a simulated buyer panel, offer and price, unit economics, a real-world demand test, the smallest MVP, marketing, brand, operations, launch and the compiled plan.",
       "source": "./",
       "category": "productivity",
       "homepage": "https://github.com/Rish-it/pmf"

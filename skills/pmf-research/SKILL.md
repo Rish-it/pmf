@@ -134,6 +134,14 @@ Write `pmf/research/market.md`:
 
 `pmf/research/competitors.csv`, `pmf/research/complaints.md`,
 `pmf/research/voice.md`, `pmf/research/market.md`, `pmf/research/reach.md`.
+Record the fingerprints with the status tool in the `pmf` skill's folder:
+
+```bash
+python3 <the pmf skill's folder>/status.py record --dir pmf \
+  --artifact research/reach.md --input idea.md --skill pmf-research
+python3 <the pmf skill's folder>/status.py record --dir pmf \
+  --artifact research/market.md --input idea.md --skill pmf-research
+```
 
 Next: run the `pmf-panel` skill. Its objections come from the voice bank; its
 pitch answers the gap.

@@ -6,20 +6,22 @@ import unittest
 from _load import ROOT, SKILLS_DIR
 
 SKILLS = ["pmf", "pmf-pressure", "pmf-research", "pmf-panel", "pmf-offer",
-          "pmf-numbers", "pmf-build", "pmf-marketing", "pmf-brand", "pmf-ops",
-          "pmf-launch", "pmf-plan"]
+          "pmf-numbers", "pmf-test", "pmf-build", "pmf-marketing", "pmf-brand",
+          "pmf-ops", "pmf-launch", "pmf-plan"]
 
-ABOUT = ("Twelve product-market fit skills that take a business from idea to launch in "
+ABOUT = ("Thirteen product-market fit skills that take a business from idea to launch in "
          "Claude Code, Codex and OpenCode: an adversarial pressure test, real market "
          "research, a simulated buyer panel, the offer and its price, unit economics, "
-         "the smallest MVP with agentic coding discipline, marketing, brand, "
-         "operations, the launch and the compiled plan.")
+         "a real-world demand test with pre-set criteria, the smallest MVP with agentic "
+         "coding discipline, marketing, brand, operations, the launch and the compiled plan.")
 
 BANNED = ("$ARGUMENTS", "CLAUDE_", "claude_skill_dir", "\u2014")
 
-TOOLS = {"pmf-panel": ["panel.py"],
+TOOLS = {"pmf": ["status.py"],
+         "pmf-panel": ["panel.py"],
          "pmf-offer": ["van_westendorp.py"],
          "pmf-numbers": ["unit_economics.py"],
+         "pmf-test": ["experiments.py"],
          "pmf-plan": ["compile.py"]}
 
 
@@ -39,7 +41,7 @@ def text_files():
 
 
 class RepoStructure(unittest.TestCase):
-    def test_twelve_skill_folders(self):
+    def test_thirteen_skill_folders(self):
         found = sorted(d for d in os.listdir(SKILLS_DIR)
                        if os.path.isfile(os.path.join(SKILLS_DIR, d, "SKILL.md")))
         self.assertEqual(found, sorted(SKILLS))

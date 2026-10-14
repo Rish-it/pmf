@@ -1,7 +1,7 @@
 # pmf: notes for agents working in this repo
 
-This repo is a skill pack: twelve agent skills that take a business idea from
-"would this work" to a launched product, plus four standard-library Python
+This repo is a skill pack: thirteen agent skills that take a business idea from
+"would this work" to a launched product, plus six standard-library Python
 tools and their tests. It works in Claude Code, Codex and OpenCode from one
 `skills/` folder.
 
@@ -13,6 +13,10 @@ tools and their tests. It works in Claude Code, Codex and OpenCode from one
   agent resolving that path. `tests/test_repo.py` enforces this.
 - **Tools are stdlib only**, Python 3.8+, and never touch the network. A
   missing input is an error, never a guess.
+- **The evidence gate.** A plan compiles to Validated only when the economics
+  work and the latest real-world test met the criteria set before it ran. The
+  panel is simulated and never gates the verdict. Do not weaken this in text
+  or in code.
 - **Tests.** Every non-trivial behavior has a test in `tests/`. Run:
   `python3 -m unittest discover -s tests -v`
 - **Style.** ASCII only, no em-dashes (test-enforced). Short sentences, plain
@@ -23,13 +27,14 @@ tools and their tests. It works in Claude Code, Codex and OpenCode from one
 ## Layout
 
 ```
-skills/pmf/            front door: state check + routing
-skills/pmf-*/          the twelve skills, one stage each
+skills/pmf/            front door: state check + routing; status.py (the ledger)
+skills/pmf-*/          the thirteen skills, one stage each
 skills/pmf-research/   + references/ (platform access, retries and evidence)
-skills/pmf-panel/      + panel.py (buyer cards, answers, tally)
+skills/pmf-panel/      + panel.py (buyer cards, strict answers, tally, runs)
 skills/pmf-offer/      + van_westendorp.py (price range)
-skills/pmf-numbers/    + unit_economics.py (margins, break-even, year 1)
-skills/pmf-plan/       + compile.py (plan + computed verdict)
+skills/pmf-numbers/    + unit_economics.py (margins, break-even, year 1, cash)
+skills/pmf-test/       + experiments.py (real-world test log, computed outcomes)
+skills/pmf-plan/       + compile.py (decision document + computed verdict)
 tests/                 the tests for every tool and for this repo's rules
 .reference/            local study material, gitignored, never shipped
 ```
@@ -50,15 +55,24 @@ tests/                 the tests for every tool and for this repo's rules
 
 Every skill in the pack reads and writes one `pmf/` folder in the user's
 project: `idea.md`, `pressure.md`, `pressure/`, `research/`, `customer.json`, `pitch.md`,
-`panel/`, `offer.md`, `numbers.json`, `numbers.md`, `build.md`,
-`marketing.md`, `brand.md`, `ops.md`, `launch.md`, `plan.md`, `summary.md`.
-Two skills never write the same file. If you need new state, add a file and
-document it here and in the README.
+`panel/` (with the previous runs under `panel/runs/`), `offer.md`,
+`numbers.json`, `numbers.md`, `experiments.json`, `test.md`, `build.md`,
+`marketing.md`, `brand.md`, `ops.md`, `launch.md`, `plan.md`, `summary.md`
+and `status.json` (the content-hash ledger the `pmf` skill owns through
+`status.py`; stages append to it through that one tool). Two skills never
+write the same file. If you need new state, add a file and document it here
+and in the README.
 
 `pmf-research` owns `research/competitors.csv`, `research/complaints.md`,
 `research/voice.md`, `research/market.md` and `research/reach.md`. The last
 file records platform access, backends, failed reads and coverage limits.
 Its platform workflow lives in this pack. Optional runtime backends do not
-change the standard-library-only, offline rule for the four Python tools.
+change the standard-library-only, offline rule for the six Python tools.
 `pmf-build` writes its state to `build.md` and product code to the project's
 normal source folders.
+
+The evidence chain: `pmf-test` writes `experiments.json` with criteria set
+before each test runs; `pmf-plan`'s compiler imports the outcome evaluator
+from `pmf-test` and the calculation engine from `pmf-numbers`, so the verdict
+cannot drift from the inputs. A changed input marks dependents stale through
+`status.json`; stale artifacts must rerun before the plan is trusted.

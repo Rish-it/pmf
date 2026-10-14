@@ -67,6 +67,12 @@ economy" is not a register entry.
 ## Output
 
 `pmf/ops.md`. If any cost changed from an estimate to a quote, update
-`pmf/numbers.json` and rerun `pmf-numbers` before finishing.
+`pmf/numbers.json` and rerun `pmf-numbers` before finishing. Record the
+fingerprint with the status tool in the `pmf` skill's folder:
+
+```bash
+python3 <the pmf skill's folder>/status.py record --dir pmf \
+  --artifact ops.md --input offer.md --input numbers.json --skill pmf-ops
+```
 
 Next: run the `pmf-launch` skill.

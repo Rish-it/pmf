@@ -23,9 +23,16 @@ the core action before handing it over.
 ## Step 0: read, then propose
 
 Read `pmf/offer.md` (what is sold), `pmf/numbers.json` (what the build may
-cost), `pmf/research/market.md` (why this is different), `pmf/panel/results.md`
+cost), `pmf/test.md` and `pmf/experiments.json` (did real buyers pay?),
+`pmf/research/market.md` (why this is different), `pmf/panel/results.md`
 (what the first users will care about). If offer or numbers are missing, say
 so and stop; building before those is spending before thinking.
+
+Build only on evidence: the latest real test in `pmf/experiments.json` must
+have passed its criteria. If it failed or has not run, say so and recommend
+`pmf-test` instead. If the user chooses to build anyway, record that decision
+in `pmf/build.md` in one line ("building without a passed test, because ...");
+the compiled verdict will not count it as validated.
 
 Propose 2 or 3 slices, smallest first, for example:
 
@@ -83,5 +90,15 @@ before any spend. Commits and code contain no AI, model or tool attribution.
 For a physical or offline business, there is no code: produce `pmf/build.md`
 as the pre-day-one checklist (fit-out, equipment, first stock, permits from
 `pmf-ops`), same standard of smallest-that-works.
+
+## Output
+
+`pmf/build.md`. Record the fingerprint with the status tool in the `pmf`
+skill's folder:
+
+```bash
+python3 <the pmf skill's folder>/status.py record --dir pmf \
+  --artifact build.md --input offer.md --input numbers.json --skill pmf-build
+```
 
 Next: run the `pmf-marketing` skill.

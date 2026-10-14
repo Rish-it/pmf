@@ -83,6 +83,15 @@ which objection each hook answers; a hook that answers none is a slogan.
 
 `pmf/marketing.md`: positioning, evidence-backed channels, the dated 30-day
 plan, ten hooks with their objections, the budget and the CAC cap, the three
-numbers.
+numbers. Record the fingerprints with the status tool in the `pmf` skill's
+folder:
+
+```bash
+python3 <the pmf skill's folder>/status.py record --dir pmf \
+  --artifact marketing.md --input panel/results.json --input offer.md --skill pmf-marketing
+```
+
+Add `--input research/market.md` and `--input research/voice.md` when those
+files exist; the channels and the hooks come from them.
 
 Next: run the `pmf-brand` skill with the positioning line.

@@ -46,8 +46,11 @@ For each problem, the cheapest thing that removes it:
 - **Core**: what is sold, described as the outcome, not the features.
 - **Bonuses**: only what is valuable to the buyer and cheap to deliver.
   Anything expensive to deliver is a margin leak; check `numbers.json`.
-- **Guarantee**: the strongest promise the numbers can afford. A refund costs
-  you the unit's contribution, never the price; a guarantee that kills the
+- **Guarantee**: the strongest promise the numbers can afford. A refund is
+  not free: you keep the price but can lose the delivery cost you cannot
+  recover, payment fees, and any replacement you ship. Estimate the refund
+  rate and the unrecoverable cost per refund before promising, and put both
+  in `pmf/numbers.json` when they are material; a guarantee that kills the
   business when 20% claim it is not a guarantee, it is a gamble.
 - **Urgency**: real and dated (a launch price with an end date, limited
   capacity that truly is limited). Never a fake countdown; it destroys trust
@@ -94,14 +97,35 @@ user; never quietly average them.
 
 ## Step 6: re-test when it changed
 
-If the offer or price changed materially, update `pmf/pitch.md` and run a
-quick panel (n=20, a fresh seed) to see whether the buy rate and the
-objections move. Report before and after. This is optional for cosmetic
-changes and required for a changed price or guarantee.
+If the offer or price changed materially, update `pmf/pitch.md` and re-deal
+the panel against the SAME buyers, so the audience does not move with the
+offer. Use the panel tool in the `pmf-panel` skill's folder:
+
+```bash
+python3 <the pmf-panel skill's folder>/panel.py init --reuse pmf/panel --pitch pmf/pitch.md
+```
+
+Then run the buyers, `check`, `tally`, and report before and after from the
+runs table in `pmf/panel/results.md`. A fresh seed or a new roster is only
+for a genuinely new audience. This is optional for cosmetic changes and
+required for a changed price or guarantee. Say plainly that a re-dealt panel
+is still simulated; the real read comes from `pmf-test`.
 
 ## Output
 
 `pmf/offer.md`: the problem list, the stack, the scores with their sentences,
-the price decision with all three inputs, the re-test result if any.
+the price decision with all three inputs, the re-test result if any. Record
+the fingerprints with the status tool in the `pmf` skill's folder:
 
-Next: run the `pmf-numbers` skill with the final price, then `pmf-build`.
+```bash
+python3 <the pmf skill's folder>/status.py record --dir pmf \
+  --artifact offer.md --input panel/results.json --skill pmf-offer
+```
+
+Add `--input research/market.md` when that file exists. Do not list
+`numbers.json` here: the price dependency runs the other way (numbers.json
+records offer.md), and two files listing each other would make every rerun
+look stale forever.
+
+Next: run the `pmf-numbers` skill with the final price, then `pmf-test` to
+buy real evidence before `pmf-build`.

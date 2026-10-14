@@ -1,0 +1,30 @@
+{
+  "experiments": [
+    {
+      "id": "E1",
+      "kind": "demand",
+      "created": "2026-10-12",
+      "hypothesis": "Office workers at the park will pay 4.50 for a cart drink without a discount.",
+      "method": "pre-sale page with a refundable 4.50 deposit, shared in the two park newsletters, 5 days",
+      "audience": "Riverside Business Park staff who buy coffee on work days",
+      "price": 4.50,
+      "criteria": {"min_paid": 10, "max_cost_per_paid": 25},
+      "results": {
+        "date": "2026-10-19",
+        "exposure": 480,
+        "paid_conversions": 12,
+        "cost": 150,
+        "notes": "Two offices asked about a weekly tray delivery; three buyers asked for refunds."
+      }
+    },
+    {
+      "id": "E2",
+      "kind": "retention",
+      "created": "2026-10-25",
+      "hypothesis": "First-week buyers come back at least every second week when the cart is outside their door.",
+      "method": "repeat purchases in weeks 2 to 4, counted from the loyalty cards",
+      "audience": "the first 30 paying buyers",
+      "criteria": {"min_repeat_rate": 0.4}
+    }
+  ]
+}

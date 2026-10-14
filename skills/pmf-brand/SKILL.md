@@ -64,6 +64,12 @@ logo.
 ## Output
 
 `pmf/brand.md`: scored name candidates and the checks run, voice rules with
-examples, the promise and taglines, the look brief.
+examples, the promise and taglines, the look brief. Record the fingerprint
+with the status tool in the `pmf` skill's folder:
+
+```bash
+python3 <the pmf skill's folder>/status.py record --dir pmf \
+  --artifact brand.md --input marketing.md --skill pmf-brand
+```
 
 Next: run the `pmf-ops` skill.

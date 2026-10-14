@@ -88,15 +88,23 @@ Read the three memos and write `pmf/pressure.md`:
 
 1. The vote, e.g. "2 fund if, 1 pass", and the average score.
 2. The kill list: every risk the lenses named, deduplicated, ranked.
-3. The conditions checklist: every FUND IF condition, as checkboxes the later
-   skills can satisfy (research answers the market ones, the panel the demand
-   ones, the numbers the economics ones).
+3. The conditions checklist: every FUND IF condition, as `- [ ]` checkboxes
+   the later skills can satisfy (research answers the market ones, the panel
+   the demand ones, the numbers the economics ones). `pmf-plan` counts these
+   checkboxes, so keep one condition per line and tick it (`- [x]`) only when
+   a recorded artifact actually satisfies it.
 4. The one number each lens said must be true, in one table.
 
 ## Output
 
 `pmf/idea.md`, `pmf/pressure/brief.md`, `pmf/pressure/<lens>.md` (or inline
-memos if run solo), `pmf/pressure.md`.
+memos if run solo), `pmf/pressure.md`. Record the fingerprints with the
+status tool in the `pmf` skill's folder:
+
+```bash
+python3 <the pmf skill's folder>/status.py record --dir pmf \
+  --artifact pressure.md --input idea.md --skill pmf-pressure
+```
 
 Next: run the `pmf-research` skill. Its findings either retire the kill list
 or confirm it.

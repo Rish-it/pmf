@@ -1,39 +1,36 @@
 ---
 name: pmf-launch
 description: >-
-  The launch. Starts with the cheapest real-world test that proves or kills
-  the panel's verdict with real buyers (a pre-sale, a waitlist with a deposit,
-  a pop-up, a pilot), success criteria set before the test runs, then a dated
-  countdown to opening day, the run sheet, and the first 30 days of what to
-  measure and what to change. Use when the user says "how do I launch",
+  The launch, after the real test has passed. Confirms the evidence gate,
+  then builds the dated countdown to opening day (permits, suppliers, build,
+  brand, ads, working backwards from the date), the hour-by-hour run sheet
+  for opening day, and the first 30 days of what to measure, including
+  repeat purchase by cohort. Use when the user says "how do I launch",
   "launch plan", "when can I open", "launch checklist", "go live", or "soft
-  open".
+  open" after the demand test.
 argument-hint: "[target launch date, if the user has one]"
 ---
 
 # pmf-launch
 
-Launching is a project with a date. This turns the whole pack into one, and
-it starts by finding out whether real people pay, cheaply, before the big
-costs start.
+Launching is a project with a date, and it starts from evidence, not hope.
+The demand test lives in `pmf-test`; this skill spends real money only after
+it passed.
 
-## Step 1: the real test
+## Step 1: confirm the gate
 
-Pick the cheapest test that fits the business and would genuinely change
-decisions; the panel's verdict is an upper bound, this is the verdict:
+Read `pmf/test.md` and `pmf/experiments.json`. Recompute the outcome with
+the experiments tool in the `pmf-test` skill's folder if you want the raw
+read (`check --dir pmf`). The latest real test must have passed its pre-set
+criteria.
 
-| business | the test |
-| --- | --- |
-| Physical, walk-in | a pop-up or market stall for 2 to 4 days with real prices |
-| Product to pre-order | a pre-sale page with a refundable deposit |
-| Service | three paid pilots at a reduced but real price |
-| Software or content | a waitlist that collects an email, then a paid founding offer |
-
-Set the success criteria BEFORE running it (the numbers that mean go, the
-numbers that mean change, the numbers that mean stop), tied to the checks in
-`pmf/numbers.json` (does the test cover break-even's daily units? does it
-confirm the price?). Record actual results against the panel's predictions in
-`pmf/launch.md`; when they disagree, real beats simulated, always.
+- **Passed**: proceed, and quote the test's numbers in `pmf/launch.md` as
+  the last evidence before spend.
+- **Mixed, failed, or no test at all**: say it plainly and stop. Launching
+  anyway is the user's call, but it must be written down as an explicit
+  decision in `pmf/launch.md` ("launching without a passed test, because
+  ..."), and the compiled verdict stays Projected or Not yet. Never
+  silently treat the panel as if it were real evidence.
 
 ## Step 2: the countdown
 
@@ -42,7 +39,8 @@ date (permits confirmed, suppliers quoted, build done, brand ready, ads
 scheduled), working backwards from the target date. Use the start of
 `ramp_per_day` in `pmf/numbers.json` as the opening volume; if the countdown
 cannot reach the plan's first month, say so and adjust the plan instead of
-the optimism.
+the optimism. The first real test's logistics that repeat at launch (the
+pre-sale page, the booking flow) are already built; reuse them.
 
 ## Step 3: the run sheet
 
@@ -56,15 +54,30 @@ the first hook, watch for one hour.
 
 - The three numbers from `pmf/marketing.md` measured weekly, honestly,
   including the weeks they are ugly.
+- **Repeat purchase by cohort**: a table in `pmf/launch.md` with one row per
+  week's cohort (buyers that week, how many bought again in the following
+  weeks, repeat rate). A first purchase is interest; a repeat is a market.
 - A weekly 30-minute review: what moved, what is stuck, the one change for
   next week (price, channel, offer, or nothing).
-- The first decision gate: if the buy rate from the real test holds after 30
-  days, scale the working channel; if not, change one thing at a time; if two
-  changes already failed, revisit `pmf-offer.md` with the new evidence.
+- The first decision gate: if the repeat rate and the three numbers hold
+  after 30 days, scale the working channel; if not, change one thing at a
+  time; if two changes already failed, revisit `pmf-offer.md` with the new
+  evidence.
+- Turn the cohort table into a logged test: run `pmf-test` and add a
+  `retention` entry (cohort size, repeat buyers, a `min_repeat_rate`
+  criterion) so the next `pmf-plan` reads retention as real evidence, not a
+  chart.
 
 ## Output
 
-`pmf/launch.md`: the chosen test with its criteria and results, the countdown
-table, the run sheet, the 30-day rhythm.
+`pmf/launch.md`: the gate result, the countdown table, the run sheet, the
+30-day rhythm, the cohort table. Record the fingerprint with the status tool
+in the `pmf` skill's folder:
 
-Next: run the `pmf-plan` skill to compile everything.
+```bash
+python3 <the pmf skill's folder>/status.py record --dir pmf \
+  --artifact launch.md --input experiments.json --input numbers.json --skill pmf-launch
+```
+
+Next: run the `pmf-plan` skill to compile everything with the first real
+numbers in place.

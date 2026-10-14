@@ -1,10 +1,35 @@
 {
+  "business": "Cart & Grounds, a mobile specialty coffee cart for office parks",
   "unit": "drink",
   "price": 4.50,
-  "variable": 1.60,
-  "fixed_monthly": 3800,
-  "startup": 18500,
+  "variable_items": [
+    {"name": "coffee beans", "per_unit": 0.70, "source": "roaster list price, 2026-09-30"},
+    {"name": "milk, syrup and cup", "per_unit": 0.80, "source": "supplier list, 2026-09-30"},
+    {"name": "card fees", "per_unit": 0.10}
+  ],
+  "fixed_items": [
+    {"name": "cart lease and pitch fee", "per_month": 900, "source": "council pitch schedule, 2026-09-28"},
+    {"name": "commissary kitchen and storage", "per_month": 1400},
+    {"name": "insurance", "per_month": 150, "source": "insurance quote, 2026-09-25"},
+    {"name": "labour (part-time relief)", "per_month": 500},
+    {"name": "marketing", "per_month": 350},
+    {"name": "repairs and consumables", "per_month": 300},
+    {"name": "software and misc", "per_month": 200}
+  ],
+  "startup_items": [
+    {"name": "cart build", "amount": 12000, "source": "builder quote, 2026-09-20"},
+    {"name": "espresso machine", "amount": 3200},
+    {"name": "permits and deposits", "amount": 1000},
+    {"name": "opening stock", "amount": 900},
+    {"name": "launch marketing", "amount": 600},
+    {"name": "equipment and signage", "amount": 800}
+  ],
+  "days_per_month": 30,
   "plan_per_day": 140,
   "ramp_per_day": [45, 70, 95, 110, 120, 130, 140, 140, 135, 130, 120, 115],
-  "capacity_per_day": 180
+  "capacity_per_day": 180,
+  "scenarios": [
+    {"name": "Winter footfall (volume -35%)", "volume_scale": 0.65},
+    {"name": "Chain opens across the road (price -10%, volume -20%)", "price": 4.05, "volume_scale": 0.8}
+  ]
 }
