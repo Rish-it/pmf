@@ -47,8 +47,10 @@ Write `pmf/customer.json`. Shape (a filled example sits next to this file as
   `how` line (daily regular, deal hunter, reads every review, loyal to a
   competitor...).
 - `objections`: the 4 to 8 doubts this buyer really carries. Each is a line of
-  text, or `{"text": ..., "source": <link>}` when a real buyer said it (a quote
-  from `pmf/research/voice.md` or `complaints.md`). The tool records how many
+  text, or `{"text": ..., "source": <link>}` when a real buyer said it (a reply
+  from `pmf/replies.md`, cited as `replies.md#R3`, or a quote from
+  `pmf/research/voice.md` or `complaints.md`). Prefer replies: they come from
+  buyers who saw the real offer. The tool records how many
   are sourced, and the plan lists unsourced ones as uncertainty: personas
   built on demographics alone barely beat a stranger, while ones built on real
   buyer words get much closer.

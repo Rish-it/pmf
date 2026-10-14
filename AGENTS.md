@@ -57,7 +57,7 @@ Every skill in the pack reads and writes one `pmf/` folder in the user's
 project: `idea.md`, `pressure.md`, `pressure/`, `research/`, `customer.json`, `pitch.md`,
 `panel/` (with the previous runs under `panel/runs/`), `offer.md`,
 `numbers.json`, `numbers.md`, `experiments.json`, `experiments.lock.json`,
-`test.md`, `build.md`,
+`replies.md`, `test.md`, `build.md`,
 `marketing.md`, `brand.md`, `ops.md`, `launch.md`, `plan.md`, `summary.md`
 and `status.json` (the content-hash ledger the `pmf` skill owns through
 `status.py`; stages append to it through that one tool). Two skills never
@@ -65,8 +65,10 @@ write the same file. If you need new state, add a file and document it here
 and in the README.
 
 `pmf-research` owns `research/competitors.csv`, `research/complaints.md`,
-`research/voice.md`, `research/market.md` and `research/reach.md`. The last
-file records platform access, backends, failed reads and coverage limits.
+`research/voice.md`, `research/market.md`, `research/reach.md` and
+`research/leads.md` (public buying signals for the outbound test).
+`reach.md` records platform access, backends, failed reads and coverage
+limits. `pmf-test` owns `replies.md`, the real replies to an outbound test.
 Its platform workflow lives in this pack. Optional runtime backends do not
 change the standard-library-only, offline rule for the six Python tools.
 `pmf-build` writes its state to `build.md` and product code to the project's

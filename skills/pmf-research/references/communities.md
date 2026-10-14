@@ -78,6 +78,18 @@ list accessible groups without supporting arbitrary group comments. Check
 what was actually returned. Avoid private groups, personal feeds and saved
 items. Login errors or rate limits end the current route.
 
+## Hacker News and Stack Exchange
+
+No login and no backend. Useful for software and B2B buyers:
+
+```bash
+curl --fail --max-time 30 "https://hn.algolia.com/api/v1/search?query=QUERY&hitsPerPage=20"
+curl --fail --max-time 30 --compressed "https://api.stackexchange.com/2.3/search/advanced?q=QUERY&site=stackoverflow&pagesize=20"
+```
+
+Link each quote to its item page (`https://news.ycombinator.com/item?id=ID`
+or the question URL), not to the API.
+
 ## V2EX
 
 Public APIs can return a topic and its replies:

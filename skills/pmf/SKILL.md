@@ -29,7 +29,7 @@ the work.
 | 3 | `pmf-panel` | `pmf/customer.json`, `pmf/pitch.md`, `pmf/panel/` | research (preferred) |
 | 4 | `pmf-offer` | `pmf/offer.md` | panel, numbers (costs) |
 | 5 | `pmf-numbers` | `pmf/numbers.json`, `pmf/numbers.md` | offer (price) |
-| 6 | `pmf-test` | `pmf/experiments.json`, `pmf/test.md` | offer, numbers |
+| 6 | `pmf-test` | `pmf/experiments.json`, `pmf/test.md`, `pmf/replies.md` | offer, numbers |
 | 7 | `pmf-build` | `pmf/build.md` | a passed test (or a written decision to skip it) |
 | 8 | `pmf-marketing` | `pmf/marketing.md` | panel, numbers |
 | 9 | `pmf-brand` | `pmf/brand.md` | marketing |

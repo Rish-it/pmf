@@ -18,7 +18,14 @@ gh issue view ISSUE_NUMBER --repo OWNER/REPO
 
 For a software idea, inspect alternatives and recent issue discussions.
 Verify whether a complaint affects the current version and whether it was
-resolved. Fall back to public repository, release and issue pages if the
+resolved. Without gh, the public REST API answers unauthenticated reads at
+60 requests an hour:
+
+```bash
+curl --fail --max-time 30 "https://api.github.com/search/repositories?q=QUERY&sort=stars&per_page=10"
+curl --fail --max-time 30 "https://api.github.com/repos/OWNER/REPO/issues?state=open&per_page=20"
+```
+ Fall back to public repository, release and issue pages if the
 connector is unavailable. Research uses read commands only.
 
 ## LinkedIn

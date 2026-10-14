@@ -114,6 +114,28 @@ channels, channels types (with sizes when visible), local spots. Only what
 you actually found, linked. This feeds `pmf-marketing` directly; a generic
 channel list is worth nothing here.
 
+## Step 5b: who is looking right now
+
+A list of real people or organisations showing a buying signal in public,
+for the real test in `pmf-test`. Write `pmf/research/leads.md`, one row each:
+
+`| who | signal | link | date | why they fit |`
+
+Signals worth a row, strongest first:
+
+- asking for a recommendation or an alternative ("anyone know a cart that
+  delivers to the office?", "alternative to <competitor>")
+- complaining in public about a competitor, or about coping without one
+- a job post or a project that names the problem this business solves
+- a change that starts the search: a new office, a funding round, a move, a
+  tool being retired
+
+`who` is the public name, handle or organisation exactly as posted, with the
+link to the public post. Do not look up emails, phone numbers or private
+profiles, do not buy lists, and do not contact anyone from this skill. Aim
+for 20 to 50 rows for a B2B or service idea; for a walk-in business, list
+the places and groups instead of people. Under 10 rows, say the list is thin.
+
 ## Step 6: the gap and the threat
 
 Write `pmf/research/market.md`:
@@ -133,7 +155,8 @@ Write `pmf/research/market.md`:
 ## Output
 
 `pmf/research/competitors.csv`, `pmf/research/complaints.md`,
-`pmf/research/voice.md`, `pmf/research/market.md`, `pmf/research/reach.md`.
+`pmf/research/voice.md`, `pmf/research/market.md`, `pmf/research/reach.md`,
+and `pmf/research/leads.md` when Step 5b found anyone.
 Record the fingerprints with the status tool in the `pmf` skill's folder:
 
 ```bash

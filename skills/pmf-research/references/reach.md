@@ -14,7 +14,9 @@ backends, check which are on this machine in one pass:
 for c in gh twitter opencli rdt xhs yt-dlp bili boss mcporter; do command -v "$c" >/dev/null && echo "ready: $c"; done
 ```
 
-Use the relevant read command below to test the actual target. An installed program, a login flag or exit code zero does
+Start with the no-install routes below; use a listed backend only when the
+needed platform is not covered by them. Use the relevant read command below
+to test the actual target. An installed program, a login flag or exit code zero does
 not establish that the source was read: require non-empty target content.
 
 Without that manager, check the needed CLI's `--help` or connector schema
@@ -23,6 +25,29 @@ command or install, upgrade or configure tools as a side effect of research.
 If the user requests setup, resolve the package from its official registry
 or repository, explain its access needs, and follow the environment's
 installation policy. Continue with public sources while setup is pending.
+
+## No-install routes
+
+These need only `curl` and the agent's own search and fetch. Checked on
+2026-10-14; a route can close at any time, so require real content as above.
+
+| Need | Route | Reference |
+| --- | --- | --- |
+| Web search | Exa's hosted MCP endpoint over HTTP, no key | [web.md](web.md) |
+| Any public page, Trustpilot reviews | Jina reader | [web.md](web.md) |
+| iPhone app reviews | App Store customer reviews feed | [web.md](web.md) |
+| Developer and B2B talk | Hacker News search API, Stack Exchange API | [communities.md](communities.md) |
+| GitHub repos and issues | public REST API, 60 requests an hour | [business.md](business.md) |
+| V2EX | public topic API | [communities.md](communities.md) |
+
+Not reachable without a backend or a session the user set up: Reddit
+(anonymous reads are blocked, also through readers), Twitter/X, XiaoHongShu,
+Facebook, Instagram, LinkedIn beyond public pages, Bluesky search, G2
+(challenge page), and YouTube or Bilibili captions. Record these as coverage
+gaps; never route around a block.
+
+Queries and URLs sent to Exa or Jina go to a third party. Send public
+queries and public URLs only.
 
 ## Source routing
 

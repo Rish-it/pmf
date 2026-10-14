@@ -98,6 +98,8 @@ class RepoStructure(unittest.TestCase):
             self.assertIn("| " + platform, routes, platform)
         for name in ("web.md", "communities.md", "video.md", "business.md"):
             self.assertIn("(%s)" % name, routes)
+        self.assertIn("## No-install routes", routes)
+        self.assertIn("pmf/research/leads.md", body)
 
     def test_tools_live_in_their_skill_folder(self):
         for skill, names in TOOLS.items():

@@ -120,14 +120,18 @@ The bundled references cover web search, pages, reviews, RSS, GitHub,
 Twitter/X, Reddit, XiaoHongShu, Facebook, Instagram, V2EX, YouTube, Bilibili,
 Xiaoyuzhou, LinkedIn, Boss Zhipin and Xueqiu. They include caption and audio
 transcription routes, session checks and platform-specific failure rules.
-Built-in search and readers work without installing extra tools. Specialist
+Built-in search and readers work without installing extra tools, and the
+no-install routes in `references/reach.md` add Exa search, App Store and
+Trustpilot reviews, Hacker News, Stack Exchange and GitHub over plain
+`curl`. Reddit, X and the other logged-in platforms still need a backend. Specialist
 CLIs and connectors are optional runtime backends; the pack does not bundle
 them or create logins. Transcription needs a configured provider and
 authorization to send the audio and incur any cost.
 
 `pmf/research/reach.md` records each platform, backend, query or URL, access
 date, useful content, failures and coverage limits. The findings live beside
-it in `competitors.csv`, `complaints.md`, `voice.md` and `market.md`. Later
+it in `competitors.csv`, `complaints.md`, `voice.md`, `market.md` and
+`leads.md` (people showing a public buying signal, for the outbound test). Later
 stages use this evidence for objections, pricing, channels and the test
 design. Missing access stays visible instead of becoming invented evidence.
 
@@ -225,7 +229,7 @@ Your own files live in `pmf/` in your project. The skills read each other's.
 The state contract is `idea.md`, `pressure.md`, `pressure/`, `research/`,
 `customer.json`, `pitch.md`, `panel/` (with `runs/`), `offer.md`,
 `numbers.json`, `numbers.md`, `experiments.json`, `experiments.lock.json`,
-`test.md`, `build.md`,
+`replies.md`, `test.md`, `build.md`,
 `marketing.md`, `brand.md`, `ops.md`, `launch.md`, `plan.md`, `summary.md`
 and `status.json` (the ledger the `pmf` skill owns). Each file has one owning
 skill. Product code from `pmf-build` lives in the project's normal source

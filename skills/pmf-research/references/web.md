@@ -15,6 +15,14 @@ Exa MCP backend can also search:
 mcporter call exa.web_search_exa query="QUERY" numResults=5
 ```
 
+Without mcporter, call Exa's hosted endpoint directly (no key, rate limited):
+
+```bash
+curl --fail --max-time 30 -X POST https://mcp.exa.ai/mcp \
+  -H 'Content-Type: application/json' -H 'Accept: application/json, text/event-stream' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"web_search_exa","arguments":{"query":"QUERY","numResults":5}}}'
+```
+
 For code examples, search official docs or GitHub. Check registered tools
 instead of assuming an older code-context endpoint is available.
 
@@ -37,6 +45,15 @@ and public issue trackers. Read recent low ratings and mixed positive
 reviews. Record counts only when visible. Keep currencies, plans and sizes
 separate until there is a defensible comparison. Use the original review
 URL when available, rather than a search URL.
+
+Two review sources that need no backend:
+
+```bash
+# App Store reviews for one app id (the number in its apps.apple.com URL)
+curl --fail --max-time 30 "https://itunes.apple.com/us/rss/customerreviews/id=APP_ID/sortBy=mostRecent/json"
+# Trustpilot through the reader
+curl --fail --max-time 30 "https://r.jina.ai/https://www.trustpilot.com/review/DOMAIN"
+```
 
 ## RSS
 

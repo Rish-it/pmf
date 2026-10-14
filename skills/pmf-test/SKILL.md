@@ -40,6 +40,7 @@ tool writes). A filled example sits next to this file as
 | Product to pre-order | a pre-sale page with a refundable deposit | visits to the page | one deposit paid |
 | Service | three paid pilots at a reduced but real price | qualified offers made | one pilot paid |
 | Software or content | a waitlist that collects an email, then a paid founding offer | people who saw the offer | one founding purchase |
+| B2B or service, with `pmf/research/leads.md` | one personal message per lead, sent by the founder from their own account, offering a paid pilot or a deposit | people messaged | one pilot or deposit paid |
 
 A test that does not risk real money for the buyer is a poll; polls do not
 count here. Read `pmf/offer.md` (what is sold and at what price),
@@ -49,6 +50,18 @@ count here. Read `pmf/offer.md` (what is sold and at what price),
 If the cheapest test needs an asset (a page, a flyer, a booking flow), build
 only that asset, minimally, in the project's normal folders. That is not
 `pmf-build`'s product; it is the test rig.
+
+### The outbound test
+
+Draft one short message per row of `pmf/research/leads.md`: who they are, the
+signal you saw (with its link), the offer at the real price, one question.
+Use the buyers' words from `pmf/research/voice.md`. Show every draft to the
+user before anything goes out.
+
+This skill never sends. The founder sends each message by hand from their own
+account, within the platform's rules, and stops following up once someone
+replies or says no. Do not automate sending, connection requests or likes,
+and do not message anyone who is not on the list.
 
 ## Step 2: write the test before running it
 
@@ -80,7 +93,18 @@ delete the lock file.
 
 ## Step 3: run it
 
-Set the test live for the dates written in the entry. While it runs, capture
+Set the test live for the dates written in the entry. For an outbound test,
+log every reply in `pmf/replies.md`, one line each:
+
+`- R1 2026-10-20 [objection] "We already pay for the lobby coffee." (lead: <link>)`
+
+Tags: `[yes]`, `[objection]`, `[desire]`, `[not now]`, `[no]`. Quote short and
+exact. Replies are private messages: they stay in this file and in
+`customer.json`, never in public copy without the sender's permission. They
+are the best panel material the pack has: real buyers answering the real
+offer.
+
+ While it runs, capture
 exactly four things: how many people were exposed, how many paid, what the
 test cost (ads, page, materials), how many payments were refunded before the
 results date, and notes in the buyers' own words. Near-misses go in `notes`. Do not help the test along (no
@@ -125,7 +149,8 @@ demand test.
 ## Output
 
 `pmf/experiments.json` (the log), `pmf/experiments.lock.json` (the locked
-criteria, written by `check`) and `pmf/test.md` (the computed report).
+criteria, written by `check`), `pmf/test.md` (the computed report) and
+`pmf/replies.md` for an outbound test.
 Then record the fingerprints, with the status tool in the `pmf` skill's
 folder, so later changes can invalidate this evidence:
 
