@@ -67,6 +67,9 @@ queries and public URLs only.
 | Bilibili | bili for discovery, OpenCLI for subtitles | public pages, then configured audio transcription | [video.md](video.md) |
 | Xiaoyuzhou | public episode or RSS transcript | configured audio transcription | [video.md](video.md) |
 | LinkedIn | configured LinkedIn connector | public company and job pages | [business.md](business.md) |
+| Job boards | portfolio board search over curl | HN Who is hiring API, then LinkedIn job search | [signals.md](signals.md) |
+| Product Hunt | Atom feed over a direct request | Exa search, then YC Launches and Show HN | [signals.md](signals.md) |
+| Funding trackers | Jina reader | direct request, then Exa search | [signals.md](signals.md) |
 | Boss Zhipin | configured boss CLI and authorized browser | public job pages | [business.md](business.md) |
 | Xueqiu | OpenCLI with an authorized session | official exchange or issuer sources | [business.md](business.md) |
 
@@ -78,6 +81,19 @@ results. Check help when flags differ. Do not run sample placeholders.
 ## Failure handling
 
 Retry a transient read once. If it still fails, switch to a ready fallback.
+Known limits, checked 2026-10-15:
+
+- The Jina reader returns HTTP 429 after a burst of reads from one address.
+  Wait, then read the page directly with `curl` and a browser user agent;
+  many public pages and feeds answer that way.
+- X search through OpenCLI hits rate limits after about 12 queries. Plan
+  10 or fewer queries per window, space them out, and record the gap when
+  the limit arrives instead of retrying.
+- OpenCLI's LinkedIn `company` and `posts` reads fail, and its job search
+  returns mostly off-topic titles. Use job search only for single postings,
+  and Exa or public company pages for the rest.
+- Product Hunt pages show a challenge page; its feed does not. Never solve
+  the challenge.
 For an expired YouTube caption URL, the video reference allows three tries.
 Keep platform calls within published limits; stop on rate limits and record
 the gap rather than sending more requests. Do not treat a login challenge,

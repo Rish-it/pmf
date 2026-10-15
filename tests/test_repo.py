@@ -100,6 +100,9 @@ class RepoStructure(unittest.TestCase):
             self.assertIn("(%s)" % name, routes)
         self.assertIn("## No-install routes", routes)
         self.assertIn("pmf/research/leads.md", body)
+        for platform in ("Job boards", "Product Hunt", "Funding trackers"):
+            self.assertIn("| " + platform, routes, platform)
+        self.assertIn("(signals.md)", routes)
 
     def test_research_scout_mode(self):
         refs = os.path.join(SKILLS_DIR, "pmf-research", "references")
