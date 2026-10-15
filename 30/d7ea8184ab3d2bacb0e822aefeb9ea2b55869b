@@ -1,0 +1,18 @@
+AGENTS.md
+  h_0e3d6b6eb02b89 69-71
+README.md
+  h_0e3d6b6eb02b89 77,147-154,224-225
+skills/pmf/SKILL.md
+  h_0e3d6b6eb02b89 12-13,66-67
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "30d7ea8184ab3d2bacb0e822aefeb9ea2b55869b",
+  "prompts": {},
+  "humans": {
+    "h_0e3d6b6eb02b89": {
+      "author": "Rishit Sharma <rishitsharmar89@gmail.com>"
+    }
+  }
+}
