@@ -1,0 +1,16 @@
+skills/pmf-research/references/reach.md
+  h_0e3d6b6eb02b89 70-72,84-96
+tests/test_repo.py
+  h_0e3d6b6eb02b89 103-105
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9e2431a7234f841ab0038b5ffab49fa398ea26de",
+  "prompts": {},
+  "humans": {
+    "h_0e3d6b6eb02b89": {
+      "author": "Rishit Sharma <rishitsharmar89@gmail.com>"
+    }
+  }
+}
