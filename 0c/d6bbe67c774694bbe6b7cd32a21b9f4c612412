@@ -1,0 +1,21 @@
+.claude-plugin/plugin.json
+  s_2f774ec7b4c3e8::t_7392f35671ae67 4
+.codex-plugin/plugin.json
+  s_2f774ec7b4c3e8::t_a501d2705d502f 3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "0cd6bbe67c774694bbe6b7cd32a21b9f4c612412",
+  "prompts": {},
+  "sessions": {
+    "s_2f774ec7b4c3e8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ef1e1d83-a49a-477c-9960-212ac2015825",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Rishit Sharma <rishitsharmar89@gmail.com>"
+    }
+  }
+}
