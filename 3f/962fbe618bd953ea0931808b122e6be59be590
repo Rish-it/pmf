@@ -1,0 +1,25 @@
+skills/pmf-research/SKILL.md
+  s_2f774ec7b4c3e8::t_16fcbf4871f40e 4-17,40-49,74-76,174-176,186-188,190-191
+skills/pmf-research/references/brief.md
+  s_2f774ec7b4c3e8::t_e3fd3b9effc1ea 1-79
+skills/pmf-research/references/scout.md
+  s_2f774ec7b4c3e8::t_e937dab447e3d6 1-150
+skills/pmf-research/references/signals.md
+  s_2f774ec7b4c3e8::t_ad1eeb21d2e38e 1-129
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "3f962fbe618bd953ea0931808b122e6be59be590",
+  "prompts": {},
+  "sessions": {
+    "s_2f774ec7b4c3e8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ef1e1d83-a49a-477c-9960-212ac2015825",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Rishit Sharma <rishitsharmar89@gmail.com>"
+    }
+  }
+}
