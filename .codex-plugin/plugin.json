@@ -21,7 +21,7 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "PMF",
-    "shortDescription": "Take a business idea to launch on real evidence",
+    "shortDescription": "Idea to launch on evidence",
     "longDescription": "Pressure-test an idea, research the market from real sources, run a buyer panel, set the offer and price, work the unit economics, run a real demand test with criteria locked before it runs, build the smallest MVP, plan marketing, brand, operations and launch, and compile a verdict from real evidence.",
     "developerName": "Rishit Sharma",
     "category": "Productivity",
@@ -36,6 +36,7 @@
     ],
     "brandColor": "#0A4D8C",
     "composerIcon": "./assets/icon.png",
-    "logo": "./assets/icon.png"
+    "logo": "./assets/icon.png",
+    "supportURL": "https://github.com/Rish-it/pmf/issues"
   }
 }

@@ -169,6 +169,18 @@ class Manifests(unittest.TestCase):
         self.assertEqual(plugin["skills"], "./skills/")
         self.assertEqual(plugin["license"], "MIT")
 
+    def test_codex_listing_fits_directory_limits(self):
+        with open(os.path.join(ROOT, ".codex-plugin", "plugin.json")) as fh:
+            ui = json.load(fh)["interface"]
+        self.assertLessEqual(len(ui["displayName"]), 30)
+        self.assertLessEqual(len(ui["shortDescription"]), 30)
+        self.assertLessEqual(len(ui["longDescription"]), 4000)
+        self.assertLessEqual(len(ui["defaultPrompt"]), 3)
+        for prompt in ui["defaultPrompt"]:
+            self.assertLessEqual(len(prompt), 128, prompt)
+        for key in ("composerIcon", "logo"):
+            self.assertTrue(os.path.isfile(os.path.join(ROOT, ui[key])), key)
+
     def test_versions_agree(self):
         versions = []
         for rel in (".claude-plugin/plugin.json", ".codex-plugin/plugin.json"):
