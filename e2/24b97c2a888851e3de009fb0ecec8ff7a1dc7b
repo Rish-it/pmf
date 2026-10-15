@@ -1,0 +1,19 @@
+skills/pmf-test/SKILL.md
+  s_2f774ec7b4c3e8::t_f6b07464691c5b 124-125
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "e224b97c2a888851e3de009fb0ecec8ff7a1dc7b",
+  "prompts": {},
+  "sessions": {
+    "s_2f774ec7b4c3e8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ef1e1d83-a49a-477c-9960-212ac2015825",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Rishit Sharma <rishitsharmar89@gmail.com>"
+    }
+  }
+}
