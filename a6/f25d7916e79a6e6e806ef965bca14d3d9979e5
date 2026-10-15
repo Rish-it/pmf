@@ -1,0 +1,21 @@
+.claude-plugin/plugin.json
+  s_2f774ec7b4c3e8::t_029f1beaed3794 21-22
+README.md
+  s_2f774ec7b4c3e8::t_66c4fd79ceeb22 163
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a6f25d7916e79a6e6e806ef965bca14d3d9979e5",
+  "prompts": {},
+  "sessions": {
+    "s_2f774ec7b4c3e8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ef1e1d83-a49a-477c-9960-212ac2015825",
+        "model": "unknown"
+      },
+      "human_author": "Rishit Sharma <rishitsharmar89@gmail.com>"
+    }
+  }
+}
