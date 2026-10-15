@@ -101,6 +101,38 @@ class RepoStructure(unittest.TestCase):
         self.assertIn("## No-install routes", routes)
         self.assertIn("pmf/research/leads.md", body)
 
+    def test_research_scout_mode(self):
+        refs = os.path.join(SKILLS_DIR, "pmf-research", "references")
+        with open(os.path.join(SKILLS_DIR, "pmf-research", "SKILL.md"), encoding="utf-8") as fh:
+            body = fh.read()
+        self.assertIn("[references/scout.md](references/scout.md)", body)
+        self.assertIn("pmf/research/opportunities.md", body)
+        with open(os.path.join(refs, "scout.md"), encoding="utf-8") as fh:
+            scout = fh.read()
+        for rule in ("unverified", "independent sources", "## Step 3: the absorption check",
+                     "| Do not build |", "## Step 6: self-check before returning",
+                     "## What this mode declines", "(signals.md)", "(brief.md)"):
+            self.assertIn(rule, scout, rule)
+        self.assertIn("pmf-pressure", scout.split("Next:")[-1])
+
+    def test_brief_is_dated_with_a_stale_date(self):
+        import datetime
+        with open(os.path.join(SKILLS_DIR, "pmf-research", "references", "brief.md"),
+                  encoding="utf-8") as fh:
+            brief = fh.read()
+        m = re.search(r"As of (\d{4}-\d{2}-\d{2})\. Stale after (\d{4}-\d{2}-\d{2}) \(60 days\)", brief)
+        self.assertIsNotNone(m, "brief.md needs an as-of and a stale-after date")
+        asof, stale = (datetime.date.fromisoformat(d) for d in m.groups())
+        self.assertEqual((stale - asof).days, 60)
+        self.assertIn("pmf/research/brief.md", brief)
+
+    def test_descriptions_fit_the_harness_limit(self):
+        for s in SKILLS:
+            fm, _ = frontmatter(os.path.join(SKILLS_DIR, s, "SKILL.md"))
+            desc = fm.split("description:", 1)[1].split("argument-hint:", 1)[0]
+            desc = " ".join(desc.replace(">-", " ").split())
+            self.assertLessEqual(len(desc), 1024, s)
+
     def test_tools_live_in_their_skill_folder(self):
         for skill, names in TOOLS.items():
             for name in names:

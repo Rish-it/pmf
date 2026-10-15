@@ -1,16 +1,20 @@
 ---
 name: pmf-research
 description: >-
-  The market scout. Maps the direct competitors, the indirect ones and the
-  substitutes a buyer would use instead, with prices, positioning, the real
-  complaints their customers post, the language buyers actually use, and where
-  those buyers hang out. Every fact linked to its public source; nothing
-  invented. Includes platform routing, capability checks, retries and
-  transcript collection for search, communities, reviews, video and business
-  sources. Uses available backends without a separate research skill.
-  Use when the user says "who are my competitors", "is this market
-  crowded", "what do buyers complain about", "find the gap", "market research",
-  or after the pressure test.
+  Finds what is worth building and researches the market for it, every fact
+  linked and dated. Scout mode: with no idea yet, or when asked whether a
+  product is worth building, reads funding, hiring, launches, incumbent
+  changelogs and SF and NYC AI activity, checks whether a platform already
+  shipped it, and returns opportunities with independent-source counts and a
+  verdict from build to do not build. Market mode: for an idea, maps the
+  competitors, prices, real complaints, buyer language and where buyers hang
+  out. Carries its own platform routing, retries and fallbacks. Use when the
+  user asks "what should I build", "what should I build in AI", "is X worth
+  building", "should I start a company doing X", "what are YC and a16z
+  funding", "what are AI companies hiring for", "map the SF or NYC AI scene",
+  "who are my competitors", "is this market crowded", "what do buyers
+  complain about", "find the gap", "market research", or after the pressure
+  test.
 argument-hint: "[city, market or niche to focus on]"
 ---
 
@@ -32,6 +36,16 @@ the pack stops guessing.
   never testimonials.
 - **Where a fact is thin, mark it thin.** One review is an anecdote; three or
   more is a theme.
+
+## Which mode
+
+- **Market mode** (the default, Steps 0 to 6 below): an idea exists in
+  `pmf/idea.md`, and this skill maps its competitors, buyers and gap.
+- **Scout mode**: there is no idea yet, or the question is whether a kind of
+  product is worth building at all. Read
+  [references/scout.md](references/scout.md) in this skill's folder and
+  follow it instead of Steps 1 to 6. It writes
+  `pmf/research/opportunities.md` and uses Step 0's access rules.
 
 ## Step 0: choose sources and check access
 
@@ -57,8 +71,9 @@ Describe the resulting gaps; never replace missing evidence with a guess.
 
 ## Step 1: who is there
 
-Read `pmf/idea.md`. If it is missing, run `pmf-pressure` to capture the idea
-before researching. Classify the alternatives:
+Read `pmf/idea.md`. If it is missing and the user has an idea, run
+`pmf-pressure` to capture it before researching; if they have none, use
+scout mode. Classify the alternatives:
 
 | type | what it means |
 | --- | --- |
@@ -156,7 +171,9 @@ Write `pmf/research/market.md`:
 
 `pmf/research/competitors.csv`, `pmf/research/complaints.md`,
 `pmf/research/voice.md`, `pmf/research/market.md`, `pmf/research/reach.md`,
-and `pmf/research/leads.md` when Step 5b found anyone.
+and `pmf/research/leads.md` when Step 5b found anyone. Scout mode writes
+`pmf/research/opportunities.md`, `pmf/research/reach.md`, and
+`pmf/research/brief.md` when it refreshed the SF and NYC brief.
 Record the fingerprints with the status tool in the `pmf` skill's folder:
 
 ```bash
@@ -166,5 +183,9 @@ python3 <the pmf skill's folder>/status.py record --dir pmf \
   --artifact research/market.md --input idea.md --skill pmf-research
 ```
 
+In scout mode, record `research/opportunities.md` the same way, without
+`--input`, since no idea exists yet.
+
 Next: run the `pmf-panel` skill. Its objections come from the voice bank; its
-pitch answers the gap.
+pitch answers the gap. After scout mode, run `pmf-pressure` on the chosen
+opportunity instead.
