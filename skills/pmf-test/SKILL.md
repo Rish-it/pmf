@@ -121,8 +121,8 @@ python3 <this skill's folder>/experiments.py check --dir pmf
 python3 <this skill's folder>/experiments.py report --dir pmf
 ```
 
-The outcome is computed (pass when every criterion is met, fail when none,
-mixed when some), never written by hand. Existing results are never edited:
+The outcome is computed from the criteria, never written by hand: all met
+is a pass, none met is a fail, some met is mixed. Existing results are never edited:
 a correction is a note, a new condition is a new test with a new id.
 
 ## Step 5: read the outcome and decide
