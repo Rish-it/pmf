@@ -160,7 +160,7 @@ agent sends public queries and public URLs to Exa search (`mcp.exa.ai`),
 the Jina reader (`r.jina.ai`), Hacker News search (`hn.algolia.com`),
 Stack Exchange, V2EX, GitHub, the App Store reviews feed and the public
 pages it reads, plus any tools you installed yourself. Details are in
-[PRIVACY.md](PRIVACY.md).
+the [Privacy policy](PRIVACY.md).
 
 ## The tools
 

@@ -18,5 +18,6 @@
     "startup",
     "validation",
     "unit-economics"
-  ]
+  ],
+  "privacyPolicyUrl": "https://github.com/Rish-it/pmf/blob/main/PRIVACY.md"
 }
