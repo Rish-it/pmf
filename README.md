@@ -74,7 +74,7 @@ pressure -> research -> panel -> offer -> numbers -> test -> build
 | --- | --- |
 | `skills/pmf` | the front door: reads the state and its fingerprints, says what is fresh, stale or missing, routes |
 | `skills/pmf-pressure` | three adversarial lenses (demand, moat, execution) score the idea and vote, with the kill list and a conditions checklist |
-| `skills/pmf-research` | competitors, prices, real complaints, buyer vocabulary, communities and people asking for a fix right now, every fact linked |
+| `skills/pmf-research` | competitors, prices, real complaints, buyer vocabulary, communities and people asking for a fix right now, every fact linked; scout mode finds what is worth building from funding, hiring, launches and incumbent moves |
 | `skills/pmf-panel` | a simulated panel of buyer agents (30 to start) with exact segment quotas, strict answers, objections traced to real quotes, and before/after runs over the same buyers |
 | `skills/pmf-offer` | the offer stack from the panel's objections, and the price from the four price answers, the competitor range and the margin floor |
 | `skills/pmf-numbers` | unit economics: itemised costs with sources, contribution, break-even, margin, year 1 by month, cash needed, payback, red flags, what-if scenarios |
@@ -143,6 +143,14 @@ date, useful content, failures and coverage limits. The findings sit beside
 it in `competitors.csv`, `complaints.md`, `voice.md`, `market.md` and
 `leads.md` (people showing a public buying signal, for the outbound test).
 Missing access stays visible instead of becoming invented evidence.
+
+With no idea yet, scout mode asks what is worth building. It reads funding
+trackers, portfolio job boards, launches, founder writing and incumbent
+changelogs, checks whether a platform has already shipped the idea, and
+writes `opportunities.md`: each opportunity with its independent-source
+count, a verdict from build to do not build, a 90-day plan and the claims
+behind it, every one linked and dated. A dated SF and NYC brief ships with
+the skill and is refreshed into `pmf/research/brief.md`.
 
 ## The tools
 
@@ -213,7 +221,8 @@ on where you are; the skills say what to check, a professional confirms it.
 ```
 skills/pmf/             SKILL.md, status.py (the state ledger)
 skills/pmf-pressure/    SKILL.md
-skills/pmf-research/    SKILL.md, references/ (access, web, communities, video, business)
+skills/pmf-research/    SKILL.md, references/ (access, web, communities, video, business,
+                        scout, signals, brief)
 skills/pmf-panel/       SKILL.md, panel.py, customer.example.json, pitch.example.md
 skills/pmf-offer/       SKILL.md, van_westendorp.py, prices.example.csv
 skills/pmf-numbers/     SKILL.md, unit_economics.py, example.json

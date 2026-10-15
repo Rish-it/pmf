@@ -9,8 +9,8 @@ description: >-
   economics, the real-world demand test, MVP build, marketing, brand,
   operations, launch and the compiled plan. Use when the user says "go to
   market", "launch my business", "validate my idea", "is this a good
-  business", "run the pmf pack", "pmf", or asks what to do next with a
-  business idea.
+  business", "run the pmf pack", "pmf", "what should I build", or asks what
+  to do next with a business idea.
 argument-hint: "[what the user wants to do, or leave blank]"
 ---
 
@@ -63,6 +63,8 @@ evidence, and it comes before the build and the launch, not after.
 - All state lives in `pmf/` in the user's project. Nothing outside it.
 - Research before the panel when it is affordable; a panel grounded in real
   complaints is worth several grounded in guesses.
+- No idea yet, or "is this worth building at all": route to `pmf-research`
+  in scout mode before `pmf-pressure`.
 - Market searches, buyer discussions and source URLs route to `pmf-research`.
   Its bundled references handle platform access and fallbacks within PMF.
   Later stages reuse that evidence and request a refresh when it is stale.

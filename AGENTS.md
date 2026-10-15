@@ -66,7 +66,9 @@ and in the README.
 
 `pmf-research` owns `research/competitors.csv`, `research/complaints.md`,
 `research/voice.md`, `research/market.md`, `research/reach.md` and
-`research/leads.md` (public buying signals for the outbound test).
+`research/leads.md` (public buying signals for the outbound test). In scout
+mode it writes `research/opportunities.md` (what is worth building, with
+verdicts) and `research/brief.md` (a refreshed SF and NYC brief).
 `reach.md` records platform access, backends, failed reads and coverage
 limits. `pmf-test` owns `replies.md`, the real replies to an outbound test.
 Its platform workflow lives in this pack. Optional runtime backends do not
