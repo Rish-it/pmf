@@ -152,6 +152,16 @@ count, a verdict from build to do not build, a 90-day plan and the claims
 behind it, every one linked and dated. A dated SF and NYC brief ships with
 the skill and is refreshed into `pmf/research/brief.md`.
 
+## Data and privacy
+
+pmf has no server, account or telemetry; its six tools run offline and
+everything it writes stays in `pmf/` in your project. During research your
+agent sends public queries and public URLs to Exa search (`mcp.exa.ai`),
+the Jina reader (`r.jina.ai`), Hacker News search (`hn.algolia.com`),
+Stack Exchange, V2EX, GitHub, the App Store reviews feed and the public
+pages it reads, plus any tools you installed yourself. Details are in
+[PRIVACY.md](PRIVACY.md).
+
 ## The tools
 
 Six tools, standard-library Python 3.8+, no network, each with tests in
@@ -236,6 +246,7 @@ skills/pmf-plan/        SKILL.md, compile.py
 assets/                 the icon
 tests/                  the tests for every tool and for this repo's own rules
 install.sh              put the skills in every agent's skills folder
+PRIVACY.md              what pmf handles and which services research contacts
 ```
 
 Your own files live in `pmf/` in your project. The state contract is
