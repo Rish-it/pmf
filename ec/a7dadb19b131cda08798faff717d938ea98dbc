@@ -1,0 +1,21 @@
+README.md
+  s_2f774ec7b4c3e8::t_32de7f58ad04a7 155-164,249
+PRIVACY.md
+  s_2f774ec7b4c3e8::t_e765abb1593073 1-54
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "eca7dadb19b131cda08798faff717d938ea98dbc",
+  "prompts": {},
+  "sessions": {
+    "s_2f774ec7b4c3e8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ef1e1d83-a49a-477c-9960-212ac2015825",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Rishit Sharma <rishitsharmar89@gmail.com>"
+    }
+  }
+}
